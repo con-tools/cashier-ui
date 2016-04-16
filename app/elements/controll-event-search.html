@@ -7,6 +7,9 @@
 	*[lang=he] {
 		direction: rtl;
 	}
+	.hidden { 
+		display: none;
+	}
 	paper-material {
 		background: white;
 		padding: 1em;
@@ -54,11 +57,12 @@ Polymer({
 			type: Array,
 			value: function() { return []; }
 		},
-		timeslotTitle : String
+		timeslotTitle : String,
 	},
 	
 	ready : function(event) {
 		this.set('timeslots',[]);
+		this.$.searchName.value = 'נא להמתין בזמן שמידע נטען...';
 		app.getCatalog('timeslots',this.populateTimeslots.bind(this));
 	},
 	
@@ -72,12 +76,16 @@ Polymer({
 			timeslot.round = app.getRound(timeslot.start);
 			return timeslot;
 		}));
-		this.doSearch();
+		this.$.searchName.value = null;
+		this.filterBySearch();
 		this.$.searchName.disabled = false;
 	},
 	
 	doSearch : function() {
-		title = this.$.searchName.value;
+		this.filterBySearch(this.$.searchName.value);
+	},
+	
+	filterBySearch : function(title) {
 		var re = new RegExp(title);
 		this.filteredTimeslots = this.timeslots.filter(function(ts){
 			return ts.event.title.match(re);
