@@ -72,6 +72,10 @@
             <iron-icon icon="home"></iron-icon>
             <span>Home</span>
           </a>
+          <a data-route="event-search" href="{{baseUrl}}event-search">
+            <iron-icon icon="event"></iron-icon>
+            <span>Events</span>
+          </a>
         </paper-menu>
         
       </paper-scroll-header-panel>
@@ -97,11 +101,16 @@
         <!-- Main Content -->
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
+          
             <section data-route="home" tabindex="-1">
               <paper-material elevation="1">
               	<h1 class="page-title" tabindex="-1">Home</h1>
                 <p>Welcome to ConTroll Cashier.</p>
               </paper-material>
+            </section>
+
+            <section data-route="event-search" tabindex="-1">
+              <controll-search-event></controll-search-event>
             </section>
 
           </iron-pages>

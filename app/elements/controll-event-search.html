@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+
+<dom-module id="controll-search-event">
+<template>
+	<style>
+	*[lang=he] {
+		direction: rtl;
+	}
+	paper-material {
+		background: white;
+		padding: 1em;
+	}
+	</style>
+	
+	<paper-material lang="he">
+		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
+		<paper-item>
+			<paper-input name="name" label="שם" onchange="doSearch" id="searchName">
+		</paper-item>
+		
+	</paper-material>
+	
+	<paper-material lang="he">
+		<template is="dom-repeat" items="{{events}}" as="event">
+		
+		</template>
+	</paper-material>
+</template>
+</dom-module>
+
+<script>
+Polymer({
+	is : 'controll-search-event',
+	properties : {
+		events : {
+			type: Array,
+			value: function() { return []; }
+		}
+	},
+	
+	ready : function(event) {
+	},
+	
+	attached : function(event) {
+		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
+	},
+	
+	doSearch : function() {
+		console.log(this.$.searchName);
+	}
+});
+</script>

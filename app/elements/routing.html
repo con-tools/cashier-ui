@@ -46,6 +46,11 @@
         setFocus(app.route);
       });
 
+    page('/event-search', function() {
+        app.route = 'event-search';
+        setFocus(app.route);
+      });
+
     // 404
     page('*', function() {
       app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
