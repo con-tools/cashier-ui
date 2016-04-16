@@ -22,7 +22,8 @@
 		</paper-item>
 		
 		<paper-item>
-		
+			<strong>משך:</strong>
+			<div>[[event.length]] שעות</div>
 		</paper-item>
 		
 		<template is="dom-repeat" items="[[event.tagtypes]]" as="tag">
@@ -67,6 +68,7 @@ Polymer({
 		event.tagtypes = [];
 		for (tag in event.tags)
 			event.tagtypes.push({tag: tag, data: event.tags[tag]});
+		event.length = event.duration / 60;
 		this.set('event', event);
 	}
 });
