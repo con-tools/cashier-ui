@@ -77,6 +77,10 @@
             <iron-icon icon="event"></iron-icon>
             <span>Events</span>
           </a>
+          <a data-route="profile-search" href="{{baseUrl}}profile-search">
+            <iron-icon icon="perm-identity"></iron-icon>
+            <span>Profiles</span>
+          </a>
         </paper-menu>
         
       </paper-scroll-header-panel>
@@ -113,7 +117,10 @@
             <section data-route="event-search" tabindex="-1">
               <controll-event-search></controll-event-search>
             </section>
-
+			
+			<section data-route="profile-search" tabindex="-1">
+              <controll-profile-search></controll-profile-search>
+            </section>
           </iron-pages>
         </div>
       </paper-scroll-header-panel>
