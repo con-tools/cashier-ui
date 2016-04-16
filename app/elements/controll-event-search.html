@@ -18,7 +18,14 @@
 	strong {
 		padding: 0 2em;
 	}
+	.roundText {
+		width: 6.5em;
+	}
+	.startText {
+		width: 9.5em;
+	}
 	</style>
+	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 	
 	<paper-material lang="he">
 		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
@@ -31,14 +38,14 @@
 	
 	<paper-material lang="he">
 		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
-			<paper-item>
+			<paper-item class="layout horizontal">
 				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
 				<paper-icon-button icon="shopping-cart" on-tap="addToCart"></paper-icon-button>
-				<div>[[timeslot.event.title]]</div>
+				<div class="flex">[[timeslot.event.title]]</div>
 				<strong>סבב:</strong>
-				<div>[[timeslot.round]]</div>
+				<div class="roundText">[[timeslot.round]]</div>
 				<strong>התחלה:</strong>
-				<div>[[timeslot.displayTime]]</div>
+				<div class="startText">[[timeslot.displayTime]]</div>
 			</paper-item>
 		</template>
 	</paper-material>
