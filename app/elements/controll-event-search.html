@@ -4,16 +4,8 @@
 <dom-module id="controll-event-search">
 <template>
 	<style>
-	*[lang=he] {
-		direction: rtl;
-	}
 	.hidden { 
 		display: none;
-	}
-	paper-material {
-		background: white;
-		padding: 1em;
-		margin-bottom: 1em;
 	}
 	strong {
 		padding: 0 2em;
@@ -24,8 +16,20 @@
 	.startText {
 		width: 9.5em;
 	}
+	.seats {
+		width: 1.2em;
+		display: inline-block;
+		padding-right: .2em;
+	}
+	.price {
+		width: 3em;
+	}
+	.table-field {
+		padding-right: 1em;
+	}
 	</style>
 	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+	<style is="custom-style" include="shared-styles"></style>
 	
 	<paper-material lang="he">
 		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
@@ -42,8 +46,9 @@
 				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
 				<paper-icon-button icon="shopping-cart" on-tap="addToCart"></paper-icon-button>
 				<div class="flex">[[timeslot.event.title]]</div>
-				<strong>סבב:</strong>
-				<div class="roundText">[[timeslot.round]]</div>
+				<div class="table-field"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
+				<div class="price table-field">&#8362;[[timeslot.event.price]]</div>
+				<div class="roundText table-field"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
 				<strong>התחלה:</strong>
 				<div class="startText">[[timeslot.displayTime]]</div>
 			</paper-item>
@@ -81,7 +86,10 @@ Polymer({
 		this.set('timeslots',timeslots.map(function(timeslot){
 			timeslot.displayTime = moment(timeslot.start).format("MMM D, YYYY HH:mm");
 			timeslot.round = app.getRound(timeslot.start);
-			return timeslot;
+			timeslot.event.price = parseInt(timeslot.event.price);
+			return app.dejsonify(timeslot);
+		}).sort(function(a,b){
+			return moment(a.start).valueOf() - moment(b.start).valueOf();
 		}));
 		this.$.searchName.value = null;
 		this.filterBySearch();
@@ -95,7 +103,9 @@ Polymer({
 	filterBySearch : function(title) {
 		var re = new RegExp(title);
 		this.filteredTimeslots = this.timeslots.filter(function(ts){
-			return ts.event.title.match(re);
+			return ts.event.status == 5 && 
+				(title || ts.available_tickets > 0) && 
+				ts.event.title.match(re);
 		});
 	},
 	
@@ -103,6 +113,10 @@ Polymer({
 		app.cart.add(ev.model.timeslot);
 		this.timeslotTitle = ev.model.timeslot.event.title;
 		this.$.addedToCart.open();
+	},
+	
+	showEvent : function(ev) {
+		page.show('/event/' + ev.model.timeslot.event.id);
 	}
 });
 </script>
