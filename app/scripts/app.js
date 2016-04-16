@@ -66,6 +66,18 @@
 		this.callbacks = [];
 	};
 	
+	var ShoppingCart = function() {
+		this.items = [];
+		return this;
+	};
+	
+	ShoppingCart.prototype.add = function (timeslot) {
+		this.items.push({
+			tickets: 1,
+			timeslot: timeslot
+		});
+	};
+	
 	var app = document.querySelector('#app');
 	app.baseUrl = '/';
 	// Listen for template bound event to know when bindings
@@ -137,6 +149,25 @@
 	};
 	
 	app.dejsonify = Catalog.prototype.dejsonify; // expose to other modules
+
+	app.cart = new ShoppingCart();
+	
+	app.timeslot_rounds = {
+	                            'בוקר יום ראשון' 	: [ moment("2016-04-24 09:00"), moment("2016-04-24 14:00")],
+	                            'צהריים יום ראשון' 	: [ moment("2016-04-24 14:00"), moment("2016-04-24 19:00")],
+	                            'ערב יום ראשון' 	: [ moment("2016-04-24 20:00"), moment("2016-04-25 01:00")],
+	                            'בוקר יום שני' 		: [ moment("2016-04-25 09:00"), moment("2016-04-25 14:00")],
+	                            'צהריים יום שני' 	: [ moment("2016-04-25 14:00"), moment("2016-04-25 18:00")],
+	                            'ערב יום שני' 		: [ moment("2016-04-25 19:00"), moment("2016-04-26 01:00")],
+	};
+	app.getRound = function(time) {
+		var m = moment(time);
+		for (var round in this.timeslot_rounds) {
+			if (m.isSame(this.timeslot_rounds[round][0]) || m.isBetween(this.timeslot_rounds[round][0], this.timeslot_rounds[round][1]))
+				return round;
+		}
+		return null;
+	};
 
 	ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');
 	ConTroll.ifAuth(function(){

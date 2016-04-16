@@ -12,22 +12,30 @@
 		padding: 1em;
 		margin-bottom: 1em;
 	}
+	strong {
+		padding: 0 2em;
+	}
 	</style>
 	
 	<paper-material lang="he">
 		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
 		<paper-item>
-			<paper-input name="name" label="שם" on-keyup="doSearch" id="searchName">
+			<paper-input disabled="disabled" name="name" label="שם" on-keyup="doSearch" id="searchName">
 		</paper-item>
-		
 	</paper-material>
+	
+	<paper-toast id="addedToCart" text="Added {{timeslotTitle}} to cart"></paper-toast>
 	
 	<paper-material lang="he">
 		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
 			<paper-item>
-				<paper-icon-button icon="exit-to-app" ontap="showEvent"></paper-icon-button>
-				<paper-icon-button icon="shopping-cart" ontap="addToCart"></paper-icon-button>
+				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
+				<paper-icon-button icon="shopping-cart" on-tap="addToCart"></paper-icon-button>
 				<div>[[timeslot.event.title]]</div>
+				<strong>סבב:</strong>
+				<div>[[timeslot.round]]</div>
+				<strong>התחלה:</strong>
+				<div>[[timeslot.displayTime]]</div>
 			</paper-item>
 		</template>
 	</paper-material>
@@ -45,7 +53,8 @@ Polymer({
 		filteredTimeslots : {
 			type: Array,
 			value: function() { return []; }
-		}
+		},
+		timeslotTitle : String
 	},
 	
 	ready : function(event) {
@@ -58,7 +67,13 @@ Polymer({
 	},
 	
 	populateTimeslots : function(timeslots) {
-		this.set('timeslots',timeslots);
+		this.set('timeslots',timeslots.map(function(timeslot){
+			timeslot.displayTime = moment(timeslot.start).format("MMM D, YYYY HH:mm");
+			timeslot.round = app.getRound(timeslot.start);
+			return timeslot;
+		}));
+		this.doSearch();
+		this.$.searchName.disabled = false;
 	},
 	
 	doSearch : function() {
@@ -70,7 +85,9 @@ Polymer({
 	},
 	
 	addToCart : function(ev) {
-		app.addToCart(ev.model.timeslot);
+		app.cart.add(ev.model.timeslot);
+		this.timeslotTitle = ev.model.timeslot.event.title;
+		this.$.addedToCart.open();
 	}
 });
 </script>
