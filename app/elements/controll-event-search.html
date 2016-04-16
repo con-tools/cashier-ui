@@ -17,14 +17,18 @@
 	<paper-material lang="he">
 		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
 		<paper-item>
-			<paper-input name="name" label="שם" on-key-pressed="doSearch" id="searchName">
+			<paper-input name="name" label="שם" on-keyup="doSearch" id="searchName">
 		</paper-item>
 		
 	</paper-material>
 	
 	<paper-material lang="he">
-		<template is="dom-repeat" items="{{events}}" as="event">
-		
+		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
+			<paper-item>
+				<paper-icon-button icon="exit-to-app" ontap="showEvent"></paper-icon-button>
+				<paper-icon-button icon="shopping-cart" ontap="addToCart"></paper-icon-button>
+				<div>[[timeslot.event.title]]</div>
+			</paper-item>
 		</template>
 	</paper-material>
 </template>
@@ -34,21 +38,39 @@
 Polymer({
 	is : 'controll-event-search',
 	properties : {
-		events : {
+		timeslots : {
+			type: Array,
+			value: function() { return []; }
+		},
+		filteredTimeslots : {
 			type: Array,
 			value: function() { return []; }
 		}
 	},
 	
 	ready : function(event) {
+		this.set('timeslots',[]);
+		app.getCatalog('timeslots',this.populateTimeslots.bind(this));
 	},
 	
 	attached : function(event) {
 		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
 	},
 	
+	populateTimeslots : function(timeslots) {
+		this.set('timeslots',timeslots);
+	},
+	
 	doSearch : function() {
-		console.log(this.$.searchName);
+		title = this.$.searchName.value;
+		var re = new RegExp(title);
+		this.filteredTimeslots = this.timeslots.filter(function(ts){
+			return ts.event.title.match(re);
+		});
+	},
+	
+	addToCart : function(ev) {
+		app.addToCart(ev.model.timeslot);
 	}
 });
 </script>
