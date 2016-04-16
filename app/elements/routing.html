@@ -23,7 +23,8 @@
     }
 
     function setFocus(selected){
-      document.querySelector('section[data-route="' + selected + '"] .page-title').focus();
+      var title = document.querySelector('section[data-route="' + selected + '"] .page-title');
+      if (title) title.focus();
     }
 
     // Routes

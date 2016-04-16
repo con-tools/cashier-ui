@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 
-<dom-module id="controll-search-event">
+<dom-module id="controll-event-search">
 <template>
 	<style>
 	*[lang=he] {
@@ -10,13 +10,14 @@
 	paper-material {
 		background: white;
 		padding: 1em;
+		margin-bottom: 1em;
 	}
 	</style>
 	
 	<paper-material lang="he">
 		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
 		<paper-item>
-			<paper-input name="name" label="שם" onchange="doSearch" id="searchName">
+			<paper-input name="name" label="שם" on-key-pressed="doSearch" id="searchName">
 		</paper-item>
 		
 	</paper-material>
@@ -31,7 +32,7 @@
 
 <script>
 Polymer({
-	is : 'controll-search-event',
+	is : 'controll-event-search',
 	properties : {
 		events : {
 			type: Array,
