@@ -1,0 +1,27 @@
+{
+  "name": "app",
+  "homepage": "https://github.com/con-troll/cashier-ui",
+  "authors": [
+    "Oded Arbel <oded@geek.co.il>"
+  ],
+  "description": "Reference Cashier UI implementation for ConTroll",
+  "main": "index.html",
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "async": "^1.5.2",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "page": "visionmedia/page.js#^1.7.1",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "platinum-elements": "PolymerElements/platinum-elements#^2.0.0",
+    "moment": "^2.12.0"
+  }
+}
