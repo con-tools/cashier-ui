@@ -51,6 +51,11 @@
         app.route = 'event-search';
         setFocus(app.route);
       });
+    
+    page('/profile-search', function() {
+        app.route = 'profile-search';
+        setFocus(app.route);
+      });
 
     // 404
     page('*', function() {
