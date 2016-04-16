@@ -1,0 +1,73 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+
+<dom-module id="controll-event">
+<template>
+	<style>
+	strong {
+		padding: 0 2em;
+	}
+	</style>
+	<style is="custom-style" include="shared-styles"></style>
+	
+	<paper-material lang="he">
+		<h1 class="page-title">ארוע: [[event.title]]</h1>
+	</paper-material>
+	
+	<paper-material lang="he">
+		
+		<paper-item>
+			<strong>תקציר:</strong>
+			<div>[[event.teaser]]</div>
+		</paper-item>
+		
+		<paper-item>
+		
+		</paper-item>
+		
+		<template is="dom-repeat" items="[[event.tagtypes]]" as="tag">
+			<paper-item>
+			<strong>[[tag.tag]]:</strong>
+			<div>[[tag.data]]</div>
+			</paper-item>
+		</template>
+	</paper-material>
+	
+</template>
+</dom-module>
+
+<script>
+Polymer({
+	is : 'controll-event',
+	properties : {
+		eventId : {
+			type: Number,
+			observer: '_updateEventId'
+		},
+		event : Object
+	},
+	
+	ready : function() {
+		console.log('event view loaded');
+	},
+	
+	attached : function() {
+		console.log('event view attached');
+	},
+	
+	_updateEventId : function() {
+		var evid = this.get('eventId');
+		if (!evid)
+			return;
+		console.log("Loading event data for event " + evid);
+		ConTroll.events.get(evid, this.updateEventData.bind(this));
+	},
+	
+	updateEventData : function(event) {
+		event.tagtypes = [];
+		for (tag in event.tags)
+			event.tagtypes.push({tag: tag, data: event.tags[tag]});
+		this.set('event', event);
+	}
+});
+</script>
