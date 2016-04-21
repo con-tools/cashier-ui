@@ -1,0 +1,96 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+
+<dom-module id="controll-cart-summary">
+<template>
+	<style>
+	paper-material {
+		margin: 5px;
+		padding: 5px;
+	}
+	.item {
+		margin: 10px;
+		padding: 10px;
+		zoom: .8;
+	}
+	.item div {
+		margin: 0 5px;
+	}
+	.ticketcount {
+		width: 40px;
+		zoom: .6;
+	}
+	</style>
+	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+	<style is="custom-style" include="shared-styles"></style>
+
+	<paper-material elevation="3" lang="he">
+		<h3>עגלת קניות</h3>
+		
+		<paper-menu class="shopping-cart">
+			<template is="dom-repeat" items="{{cartDisplay}}" as="timeslot">
+				<div class="item layout horizontal">
+					<div class="ticketcount">
+						<paper-icon-button icon="add" on-tap="incTickets"></paper-icon-button>
+						<paper-icon-button icon="remove" on-tap="decTickets"></paper-icon-button>
+					</div>
+					<div>[[timeslot.amount]]</div>
+					<div>[[timeslot.event.title]]</div>
+					<div>₪[[timeslot.event.price]]</div>
+				</div>
+			</template>
+		</paper-menu>
+		
+	</paper-material>
+</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is : 'controll-cart-summary',
+		properties : {
+			cartItems : {
+				type: Array,
+				notify: true
+			},
+			cartDisplay : {
+				type: Array,
+				notify: true,
+				value: function() { return []; }
+			}
+		},
+		
+		observers: [
+		            //'updateCart(cartItems.splices)',
+		            'updateCart(cartItems.*)'
+		            ],
+
+		ready : function() {
+		},
+
+		attached : function() {
+		},
+		
+		updateCart : function(cartItemsChanges) {
+			console.log("Updating cart");
+			var ids = cartItemsChanges.path.match(/\.#(\d+)\./);
+			if (ids) { // amount changes
+				var displayId = this.cartDisplay.length - 1 - parseInt(ids[1]);
+				this.set('cartDisplay.' + displayId + '.amount',cartItemsChanges.value);
+			} else { // other changes
+				this.set('cartDisplay', []);
+				this.cartItems.reverse().forEach((function(ts){
+					this.push('cartDisplay', ts); 
+				}).bind(this));
+			}
+		},
+		
+		incTickets : function(event) {
+			app.updatecartAmount(event.model.timeslot.id, event.model.timeslot.amount + 1);
+		},
+		
+		decTickets : function(event) {
+			app.updatecartAmount(event.model.timeslot.id, event.model.timeslot.amount - 1);
+		}
+	});
+</script>

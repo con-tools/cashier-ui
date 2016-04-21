@@ -27,16 +27,34 @@
 	.table-field {
 		padding-right: 1em;
 	}
+	paper-dialog {
+		padding: 1em;
+	}
+	paper-dialog paper-item {
+		margin: 0;
+		padding: 0;
+		min-height: 36px;
+	}
 	</style>
 	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 	<style is="custom-style" include="shared-styles"></style>
 	
-	<paper-material lang="he">
-		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
+	<iron-pages id="loader" attr-for-selected="id" selected="now-loading">
+	
+	<paper-material lang="he" id="now-loading">
 		<paper-item>
-			<paper-input disabled="disabled" name="name" label="שם" on-keyup="doSearch" id="searchName">
+			<paper-spinner active></paper-spinner>
+			<strong>נא להמתין בזמן שמידע נטען...</strong>
 		</paper-item>
 	</paper-material>
+	
+	<paper-material lang="he" id="search-form">
+		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
+		<paper-item>
+			<paper-input name="name" label="שם" on-keyup="doSearch" id="searchName">
+		</paper-item>
+	</paper-material>
+	</iron-pages>
 	
 	<paper-toast id="addedToCart" text="Added {{timeslotTitle}} to cart"></paper-toast>
 	
@@ -45,15 +63,39 @@
 			<paper-item class="layout horizontal">
 				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
 				<paper-icon-button icon="shopping-cart" on-tap="addToCart"></paper-icon-button>
-				<div class="flex">[[timeslot.event.title]]</div>
-				<div class="table-field"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
-				<div class="price table-field">&#8362;[[timeslot.event.price]]</div>
-				<div class="roundText table-field"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
-				<strong>התחלה:</strong>
-				<div class="startText">[[timeslot.displayTime]]</div>
+				<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
+				<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
+				<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
+				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
+				<strong on-tap="popupEventView">התחלה:</strong>
+				<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
 			</paper-item>
 		</template>
 	</paper-material>
+	
+	<paper-dialog id="eventView" lang="he">
+		<paper-item>
+			<strong>תקציר:</strong>
+			<div>[[viewedEvent.teaser]]</div>
+		</paper-item>
+		
+		<paper-item>
+			<strong>משך:</strong>
+			<div>[[viewedEvent.length]] שעות</div>
+		</paper-item>
+		
+		<template is="dom-repeat" items="[[viewedEvent.tagtypes]]" as="tag">
+			<paper-item>
+			<strong>[[tag.tag]]:</strong>
+			<div>[[tag.data]]</div>
+			</paper-item>
+		</template>
+		
+		<paper-item class="layout horizontal">
+			<paper-button raised on-tap="popupEventView"><iron-icon icon="close"></iron-icon>סגור</paper-button>
+		</paper-item>
+	</paper-dialog>
+	
 </template>
 </dom-module>
 
@@ -70,11 +112,12 @@ Polymer({
 			value: function() { return []; }
 		},
 		timeslotTitle : String,
+		viewedEvent : Object
 	},
 	
 	ready : function(event) {
+		this.$.loader.selected = 'now-loading';
 		this.set('timeslots',[]);
-		this.$.searchName.value = 'נא להמתין בזמן שמידע נטען...';
 		app.getCatalog('timeslots',this.populateTimeslots.bind(this));
 	},
 	
@@ -84,16 +127,28 @@ Polymer({
 	
 	populateTimeslots : function(timeslots) {
 		this.set('timeslots',timeslots.map(function(timeslot){
+			timeslot = app.dejsonify(timeslot);
 			timeslot.displayTime = moment(timeslot.start).format("MMM D, YYYY HH:mm");
 			timeslot.round = app.getRound(timeslot.start);
 			timeslot.event.price = parseInt(timeslot.event.price);
-			return app.dejsonify(timeslot);
+			timeslot.event.tagtypes = [];
+			for (tag in timeslot.event.tags) {
+				var data = timeslot.event.tags[tag]
+				if (data instanceof Array)
+					data = data.join(", ");
+				timeslot.event.tagtypes.push({
+					tag: tag, 
+					data: data
+				});
+			}
+			timeslot.event.length = timeslot.event.duration / 60;
+			
+			return timeslot;
 		}).sort(function(a,b){
 			return moment(a.start).valueOf() - moment(b.start).valueOf();
 		}));
-		this.$.searchName.value = null;
+		this.$.loader.selected = 'search-form';
 		this.filterBySearch();
-		this.$.searchName.disabled = false;
 	},
 	
 	doSearch : function() {
@@ -109,8 +164,16 @@ Polymer({
 		});
 	},
 	
+	popupEventView : function(ev) {
+		if (ev && ev.model)
+			this.viewedEvent = ev.model.timeslot.event;
+		else
+			this.viewedEvent = null;
+		this.$.eventView.toggle();
+	},
+	
 	addToCart : function(ev) {
-		app.cart.add(ev.model.timeslot);
+		app.addToCart(ev.model.timeslot);
 		this.timeslotTitle = ev.model.timeslot.event.title;
 		this.$.addedToCart.open();
 	},

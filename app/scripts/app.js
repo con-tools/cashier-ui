@@ -84,6 +84,7 @@
 	// have resolved and content has been stamped to the page
 	app.addEventListener('dom-change', function() {
 		console.log('Our app is ready to rock!');
+		this.set('cart',[]);
 	});
 
 	window.addEventListener('WebComponentsReady', function() {// See https://github.com/Polymer/polymer/issues/1381
@@ -150,8 +151,6 @@
 	
 	app.dejsonify = Catalog.prototype.dejsonify; // expose to other modules
 
-	app.cart = new ShoppingCart();
-	
 	app.timeslot_rounds = {
 	                            'ראשון בוקר'	: [ moment("2016-04-24 09:00"), moment("2016-04-24 14:00")],
 	                            'ראשון צהריים'	: [ moment("2016-04-24 14:00"), moment("2016-04-24 19:00")],
@@ -160,6 +159,7 @@
 	                            'שני צהריים'	: [ moment("2016-04-25 14:00"), moment("2016-04-25 18:00")],
 	                            'שני ערב' 	: [ moment("2016-04-25 19:00"), moment("2016-04-26 01:00")],
 	};
+	
 	app.getRound = function(time) {
 		var m = moment(time);
 		for (var round in this.timeslot_rounds) {
@@ -168,6 +168,19 @@
 		}
 		return null;
 	};
+	
+	app.addToCart = function(timeslot) {
+		timeslot.amount = 1;
+		this.push('cart', timeslot);
+	};
+	
+	app.updatecartAmount = function(timeslotid, amount) {
+		var i = this.cart.findIndex(function(ts){ return ts.id == timeslotid; });
+		if (amount < 1)
+			this.splice('cart',i,1);
+		else if (amount < this.cart[i].available_tickets)
+			this.set('cart.' + i + '.amount', amount);
+	}
 
 	ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');
 	ConTroll.ifAuth(function(){
