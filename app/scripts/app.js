@@ -171,7 +171,13 @@
 	
 	app.addToCart = function(timeslot) {
 		var user = this.$.cashier.user;
-		ConTroll.tickets.addToCart(timeslot.id, user.id, this.updateCart.bind(this));
+		// check that we don't already have this in the cart
+		var i = this.cart.findIndex(function(t){ return t.timeslot.id == timeslot.id; });
+		if (i < 0) {
+			ConTroll.tickets.addToCart(timeslot.id, user.id, this.updateCart.bind(this));
+		} else {
+			this.updateCartAmount(this.cart[i].id, parseInt(this.cart[i].amount) + 1);
+		}
 	};
 	
 	app.updateCart = function() {
