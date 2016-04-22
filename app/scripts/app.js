@@ -183,14 +183,16 @@
 			this.set('cart',[]);
 	};
 	
-	app.updatecartAmount = function(timeslotid, amount) {
-		var i = this.cart.findIndex(function(ts){ return ts.id == timeslotid; });
-		if (amount < 1)
-			this.splice('cart',i,1);
-		else if (amount < this.cart[i].available_tickets) {
-			this.set('cart.' + i + '.amount', amount);
-		}
-	}
+	app.updateCartAmount = function(ticketid, amount) {
+		ConTroll.tickets.updateCart(ticketid,amount,(function(ticket){
+			var i = this.cart.findIndex(function(t){ return t.id == ticket.id; });
+			this.cart[i].timeslot.available_tickets = ticket.timeslot.available_tickets; // populate property calculated on the server
+			if (amount < 1)
+				this.splice('cart',i,1);
+			else
+				this.set('cart.' + i + '.amount', ticket.amount);
+		}).bind(this));
+	};
 	
 	app.addEventListener('user-profile-changed', app.updateCart.bind(app), false);
 
