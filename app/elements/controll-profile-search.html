@@ -115,7 +115,7 @@ Polymer({
 		var searchTerms = this.$.searchName.value.split(/\s+/).filter(function(word){
 			return word.match(/\S/);
 		}).map(function(word){
-			return new RegExp("\\s" + word);
+			return new RegExp("\\s" + word,"i");
 		});
 		this.set('displayUsers', this.users.filter(function(user){
 			if (searchTerms.length == 0)
