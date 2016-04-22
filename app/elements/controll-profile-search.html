@@ -130,7 +130,7 @@ Polymer({
 			var matches = searchTerms.filter(function(term){
 				return search.match(term);
 			});
-			return matches.length > 0;
+			return matches.length == searchTerms.length;
 		}));
 	},
 	
@@ -158,10 +158,11 @@ Polymer({
 			return;
 		}
 		
-		return ConTroll.users.create(this.$.addUserName.value, this.$.addUserEmail.value, this.$.addUserPhone.value, (function() {
+		return ConTroll.users.create(this.$.addUserName.value, this.$.addUserEmail.value, this.$.addUserPhone.value, (function(user) {
 			app.invalidateCatalog('users');
 			this.startAddUser();
-			this.ready();
+			this.ready(); // reload the user list anyway
+			this.set('user', user); // notify
 		}).bind(this));
 	},
 });
