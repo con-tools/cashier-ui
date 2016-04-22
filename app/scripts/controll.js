@@ -331,6 +331,25 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
+	ConTrollTickets.prototype.addToCart = function(timeslot_id, user_id, callback) {
+		this.api.create(this.collection, {
+			timeslot: timeslot_id,
+			user: user_id
+		}, function(res,err){
+			if (err) return reportError('creating a ticket',err);
+			callback(res);
+		});
+	};
+	
+	ConTrollTickets.prototype.updateCart = function(ticket_id, amount, callback) {
+		this.api.update(this.collection, ticket_id, {
+			amount: amount
+		}, function(res,err){
+			if (err) return reportError('updating ticket amount',err);
+			callback(res);
+		});
+	};
+	
 	/**
 	 * ConTroll Coupon Types API
 	 * @param ConTroll api
