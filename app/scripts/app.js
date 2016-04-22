@@ -169,18 +169,21 @@
 		return null;
 	};
 	
-	app.addToCart = function(timeslot) {
+	app.addToCart = function(timeslot, callback) {
 		var user = this.$.cashier.user;
 		// check that we don't already have this in the cart
 		var i = this.cart.findIndex(function(t){ return t.timeslot.id == timeslot.id; });
 		if (i < 0) {
-			ConTroll.tickets.addToCart(timeslot.id, user.id, this.updateCart.bind(this));
+			ConTroll.tickets.addToCart(timeslot.id, user.id, (function(ticket){
+				this.updateCart(ticket);
+				if (callback) callback(ticket);
+			}).bind(this));
 		} else {
-			this.updateCartAmount(this.cart[i].id, parseInt(this.cart[i].amount) + 1);
+			this.updateCartAmount(this.cart[i].id, parseInt(this.cart[i].amount) + 1, callback);
 		}
 	};
 	
-	app.updateCart = function() {
+	app.updateCart = function(ticket) {
 		if (this.$.cashier.user)
 			ConTroll.tickets.forUser(this.$.cashier.user.id, (function(tickets){
 				this.set('cart', tickets);
@@ -189,7 +192,7 @@
 			this.set('cart',[]);
 	};
 	
-	app.updateCartAmount = function(ticketid, amount) {
+	app.updateCartAmount = function(ticketid, amount, callback) {
 		ConTroll.tickets.updateCart(ticketid,amount,(function(ticket){
 			var i = this.cart.findIndex(function(t){ return t.id == ticket.id; });
 			this.cart[i].timeslot.available_tickets = ticket.timeslot.available_tickets; // populate property calculated on the server
@@ -197,6 +200,7 @@
 				this.splice('cart',i,1);
 			else
 				this.set('cart.' + i + '.amount', ticket.amount);
+			if (callback) callback(ticket);
 		}).bind(this));
 	};
 	
