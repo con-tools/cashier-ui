@@ -324,6 +324,13 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
+	ConTrollTickets.prototype.forUser = function(user_id, callback) {
+		this.api.get(this.collection, '?user=' + user_id, function(res, err) {
+			if (err) return reportError('listing tickets for user',err);
+			callback(res);
+		});
+	};
+	
 	ConTrollTickets.prototype.remove = function(id, refundTypeId, callback) {
 		this.api.del(this.collection, id + '?refund-coupon-type='+ refundTypeId, function(res, err){
 			if (err) return reportError('cancelling a ticket',err);
