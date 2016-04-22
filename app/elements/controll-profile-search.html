@@ -99,7 +99,7 @@ Polymer({
 	changeUser : function() {
 		this.$.searchName.value = '';
 		this.doSearch();
-		window.setTimeout((function(){ this.$.searchName.$.input.focus(); }).bind(this),750);
+		window.setTimeout((function(){ this.$.searchName.$.input.focus(); }).bind(this),1000);
 	},
 	
 	selectUser : function(event) {
