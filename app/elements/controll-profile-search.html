@@ -3,30 +3,37 @@
 
 <dom-module id="controll-profile-search">
 <template>
+	<style is="custom-style" include="shared-styles"></style>
 	<style>
-	*[lang=he] {
-		direction: rtl;
-	}
-	paper-material {
-		background: white;
-		padding: 1em;
-		margin-bottom: 1em;
+	paper-input {
+		margin: 0 1em;
 	}
 	</style>
+
+	<iron-pages id="loader" attr-for-selected="id" selected="now-loading" lang="he">
+
+		<paper-material id="now-loading">
+			<paper-item>
+				<paper-spinner active></paper-spinner>
+				<strong>נא להמתין בזמן שמידע נטען...</strong>
+			</paper-item>
+		</paper-material>
+
+		<div id="search-form">
 	
-	<paper-material lang="he">
-		<h1 class="page-title" tabindex="-1">פרופיל משתמש</h1>
-		<paper-item>
-			<paper-input name="name" label="שם" on-key-pressed="doSearch" id="searchName">
-		</paper-item>
-		
-	</paper-material>
-	
-	<paper-material lang="he">
-		<template is="dom-repeat" items="{{events}}" as="event">
-		
-		</template>
-	</paper-material>
+			<div>
+				<paper-input name="saerch" label="חיפוש" on-keyup="doSearch" id="searchName">
+			</div>
+			
+			<template is="dom-repeat" items="{{displayUsers}}" as="user">
+				<paper-item on-tap="selectUser">
+					<paper-input readonly label="שם" value="[[user.name]]"></paper-input>
+					<paper-input readonly label="דואר" value="[[user.email]]"></paper-input>
+					<paper-input readonly label="טלפון" value="[[user.phone]]"></paper-input>
+				</paper-item>
+			</template>
+			
+		</div>
 </template>
 </dom-module>
 
@@ -34,21 +41,70 @@
 Polymer({
 	is : 'controll-profile-search',
 	properties : {
-		events : {
+		users : {
 			type: Array,
 			value: function() { return []; }
+		},
+		displayUsers : {
+			type: Array,
+			value: function() { return []; }
+		},
+		user : {
+			type: Object,
+			notify: true,
+			observer: 'changeUser'
 		}
 	},
 	
 	ready : function(event) {
+		this.$.loader.selected = 'now-loading';
+		app.getCatalog('users',this.populateUsers.bind(this));
 	},
 	
 	attached : function(event) {
 		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
 	},
 	
-	doSearch : function() {
-		console.log(this.$.searchName);
+	populateUsers : function(users) {
+		this.set('users', users);
+		this.$.loader.selected = 'search-form';
+		this.doSearch();
+	},
+	
+	changeUser : function() {
+		this.$.searchName.focus();
+	},
+	
+	selectUser : function(event) {
+		this.set('user', event.model.user);
+	},
+	
+	doSearch : function(event) {
+		if (event && event.code == 'Enter' && this.displayUsers.length > 0) {
+			this.set('user', this.displayUsers[0])
+			return false;
+		}
+			
+		var searchTerms = this.$.searchName.value.split(/\s+/).filter(function(word){
+			return word.match(/\S/);
+		}).map(function(word){
+			return new RegExp("\\s" + word);
+		});
+		this.set('displayUsers', this.users.filter(function(user){
+			if (searchTerms.length == 0)
+				return false;
+			var search = [
+			              '', // space pad around name to help with "start-of-word" and "end-of-word" matches, because \b only works for latin scripts
+			              user.name,
+			              user.email,
+			              user.phone,
+			              ''
+			              ].join(" ");
+			var matches = searchTerms.filter(function(term){
+				return search.match(term);
+			});
+			return matches.length > 0;
+		}));
 	}
 });
 </script>

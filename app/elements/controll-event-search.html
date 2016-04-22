@@ -3,6 +3,7 @@
 
 <dom-module id="controll-event-search">
 <template>
+	<style is="custom-style" include="shared-styles"></style>
 	<style>
 	.hidden { 
 		display: none;
@@ -36,8 +37,6 @@
 		min-height: 36px;
 	}
 	</style>
-	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
-	<style is="custom-style" include="shared-styles"></style>
 	
 	<iron-pages id="loader" attr-for-selected="id" selected="now-loading">
 	
@@ -56,13 +55,12 @@
 	</paper-material>
 	</iron-pages>
 	
-	<paper-toast id="addedToCart" text="Added {{timeslotTitle}} to cart"></paper-toast>
+	<paper-toast id="addedToCart" text="Added {{timeslotTitle}} to cart" duration="0"></paper-toast>
 	
 	<paper-material lang="he">
 		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
 			<paper-item class="layout horizontal">
 				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
-				<paper-icon-button icon="shopping-cart" on-tap="addToCart"></paper-icon-button>
 				<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
 				<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
 				<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
@@ -173,7 +171,6 @@ Polymer({
 	},
 	
 	addToCart : function(ev) {
-		app.addToCart(ev.model.timeslot);
 		this.timeslotTitle = ev.model.timeslot.event.title;
 		this.$.addedToCart.open();
 	},

@@ -1,0 +1,61 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+
+<dom-module id="controll-cashier-screen">
+<template>
+	<style is="custom-style" include="shared-styles"></style>
+	<style>
+	</style>
+	
+	<paper-material elevation="1" lang="he">
+	<h1 class="page-title" tabindex="-1">מסוף קופה</h1>
+	</paper-material>
+	
+	<paper-material elevation="1" lang="he">
+	<h2>כרטיס שחקן</h2>
+	<iron-collapse id="currentUser">
+		<paper-item>
+			<paper-input readonly label="שם" value="[[user.name]]"></paper-input>
+			<paper-input readonly label="דואל" value="[[user.email]]"></paper-input>
+			<paper-input readonly label="טלפון" value="[[user.phone]]"></paper-input>
+		</paper-item>
+	</iron-collapse>
+	<iron-collapse id="users">
+		<controll-profile-search user="{{user}}"></controll-profile-search>
+	</iron-collapse>
+	</paper-material>
+	
+	<paper-material elevation="1" lang="he">
+	<h2>ארועים</h2>
+	<iron-collapse id="events">
+		<controll-event-search></controll-event-search>
+	</iron-collapse>
+	</paper-material>
+	
+</template>
+</dom-module>
+
+<script>
+Polymer({
+	is : 'controll-cashier-screen',
+	properties : {
+		user : {
+			type: Object,
+			observer: 'updateUser'
+		}
+	},
+
+	ready : function() {
+		this.$.currentUser.hide();
+		this.$.users.show();
+	},
+
+	attached : function() {
+	},
+	
+	updateUser : function(user) {
+		this.$.currentUser.show();
+		this.$.users.hide();
+	}
+});
+</script>

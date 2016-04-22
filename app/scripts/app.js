@@ -171,6 +171,7 @@
 	
 	app.addToCart = function(timeslot) {
 		timeslot.amount = 1;
+		timeslot.price = this.event.price;
 		this.push('cart', timeslot);
 	};
 	
@@ -178,8 +179,9 @@
 		var i = this.cart.findIndex(function(ts){ return ts.id == timeslotid; });
 		if (amount < 1)
 			this.splice('cart',i,1);
-		else if (amount < this.cart[i].available_tickets)
+		else if (amount < this.cart[i].available_tickets) {
 			this.set('cart.' + i + '.amount', amount);
+		}
 	}
 
 	ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');

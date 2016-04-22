@@ -110,10 +110,7 @@
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
           
             <section data-route="home" tabindex="-1">
-              <paper-material elevation="1">
-              	<h1 class="page-title" tabindex="-1">Home</h1>
-                <p>Welcome to ConTroll Cashier.</p>
-              </paper-material>
+              <controll-cashier-screen></controll-cashier-screen>
             </section>
 
             <section data-route="event-search" tabindex="-1">
@@ -125,7 +122,10 @@
             </section>
 			
 			<section data-route="profile-search" tabindex="-1">
-              <controll-profile-search></controll-profile-search>
+				<paper-material lang="he">
+					<h1 class="page-title" tabindex="-1">כרטיס שחקן</h1>
+              		<controll-profile-search></controll-profile-search>
+              	</paper-material>
             </section>
           </iron-pages>
         </div>
