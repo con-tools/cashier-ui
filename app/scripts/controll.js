@@ -700,10 +700,15 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
-	ConTrollUsers.prototype.create = function(name, email, callback) {
+	ConTrollUsers.prototype.create = function(name, email, phone, callback) {
+		if (typeof phone == 'function') {// phone is optional
+			callback = phone;
+			phone = undefined;
+		}
 		this.api.create(this.collection, {
 			name: name,
 			email: email,
+			phone: phone
 		}, function(res,err){
 			if (err) {
 				console.log('Error', err.error || err);
