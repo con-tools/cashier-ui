@@ -110,7 +110,7 @@
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
           
             <section data-route="home" tabindex="-1">
-              <controll-cashier-screen></controll-cashier-screen>
+              <controll-cashier-screen id="cashier" user="{{user}}"></controll-cashier-screen>
             </section>
 
             <section data-route="event-search" tabindex="-1">
@@ -118,7 +118,10 @@
             </section>
 			
             <section data-route="event" tabindex="-1">
-              <controll-event event-id="{{params.id}}">
+				<paper-material lang="he">
+				<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
+	              <controll-event event-id="{{params.id}}">
+              	</paper-material>
             </section>
 			
 			<section data-route="profile-search" tabindex="-1">
