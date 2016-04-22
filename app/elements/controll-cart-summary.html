@@ -45,6 +45,12 @@
 				</tr>
 			</template>
 		</tbody>
+		<tbody>
+			<tr>
+				<td colspan="3">סה"כ</td>
+				<td>₪{{total}}</td>
+			</tr>
+		</tbody>
 		</table>
 		
 		<paper-button on-tap="clearCart">
@@ -67,7 +73,8 @@
 				type: Array,
 				notify: true,
 				value: function() { return []; }
-			}
+			},
+			total : Number
 		},
 		
 		observers: [
@@ -96,6 +103,9 @@
 					this.push('cartDisplay', ticket); 
 				}).bind(this));
 			}
+			var totalCost = 0;
+			this.cartDisplay.forEach(function(ticket){ totalCost += parseFloat(ticket.price); });
+			this.set('total', parseInt(totalCost * 100)/100);
 		},
 		
 		incTickets : function(event) {
