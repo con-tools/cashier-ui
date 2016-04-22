@@ -14,6 +14,11 @@ var ConTroll = (function(w,d){
 		}
 	}
 	
+	function reportError(action, err) {
+		console.log('Error in ' + action, err.error || err);
+		if (err != 'CORS error') alert("Error " + action + ":" + (err.error||err));
+	}
+	
 	/**
 	 * Authentication API
 	 */
@@ -24,10 +29,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollAuth.prototype.verify = function(callback) {
 		this.api.send('auth/verify', function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('Auth verification',err);
 			callback(res.status);
 		});
 	};
@@ -50,10 +52,7 @@ var ConTroll = (function(w,d){
 			'redirect-url': url,
 			'provider': (provider || 'google')
 		}, function(res,err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('Start authentication',err);
 			callback(res['auth-url']);
 		});
 	};
@@ -68,10 +67,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollAuth.prototype.logout = function(callback) {
 		this.api.send('auth/logout', function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('logout',err);
 			callback(res);
 		});
 	}
@@ -81,10 +77,7 @@ var ConTroll = (function(w,d){
 	 */
 	ConTrollAuth.prototype.id = function(callback) {
 		this.api.send('auth/id', function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('getting login id',err);
 			callback(res);
 		});
 	};
@@ -99,10 +92,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollRecords.prototype.get = function(descriptor, callback) {
 		this.api.get({convention: true, collection: 'records'}, descriptor, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('getting user records',err);
 			var data = res['data'];
 			if (data == null) // no data was found
 				callback(null);
@@ -123,10 +113,7 @@ var ConTroll = (function(w,d){
 			acl: acl,
 			data: JSON.stringify(data)
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('storing user records',err);
 			callback(true);
 		});
 	};
@@ -143,20 +130,14 @@ var ConTroll = (function(w,d){
 	
 	ConTrollTags.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing system tag types',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTags.prototype.getType = function(title, callback) {
 		this.api.get(this.collection, title, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing tag type',err);
 			callback(res);
 		});
 	};
@@ -167,10 +148,7 @@ var ConTroll = (function(w,d){
 			requirement: requirement,
 			"public": ispublic
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('adding system tag type',err);
 			callback(res);
 		});
 	};
@@ -181,21 +159,14 @@ var ConTroll = (function(w,d){
 			requirement: requirement,
 			"public": ispublic
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('updating system tag',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTags.prototype.deleteType = function(title, callback) {
 		this.api.del(this.collection, title, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				alert("Error: " + (err.error || err));
-				return;
-			}
+			if (err) return reportError('deleting system tag',err);
 			callback(res);
 		});
 	};
@@ -206,10 +177,7 @@ var ConTroll = (function(w,d){
 		this.api.update(this.collection, title, {
 			"replace-values": replace_values
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('updating system tag value',err);
 			callback(res);
 		});
 	};
@@ -218,10 +186,7 @@ var ConTroll = (function(w,d){
 		this.api.update(this.collection, title, {
 			values: [ newvalue ]
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('adding system tag value',err);
 			callback(res);
 		});
 	};
@@ -230,11 +195,7 @@ var ConTroll = (function(w,d){
 		this.api.update(this.collection, title, {
 			"remove-values": [ value ]
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				alert("Error: " + (err.error || err));
-				return;
-			}
+			if (err) return reportError('deleting system tag value',err);
 			callback(res);
 		});
 	};
@@ -251,10 +212,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollEvents.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing events',err);
 			callback(res);
 		});
 	};
@@ -276,30 +234,21 @@ var ConTroll = (function(w,d){
 			duration: duration,
 			user: { id: ownerId }
 		}, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('creating event',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollEvents.prototype.update = function(id, fields, callback) {
 		this.api.update(this.collection, id, fields, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('updating event',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollEvents.prototype.remove = function(id, fields, callback) {
 		this.api.del(this.collection, id, fields, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('removing event',err);
 			callback(res);
 		});
 	};
@@ -316,22 +265,14 @@ var ConTroll = (function(w,d){
 	
 	ConTrollTimeslots.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting time slot catalog: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('Listing time slots',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTimeslots.prototype.forEvent = function(event_id, callback) {
 		this.api.get(this.collection, { event: event_id }, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting time slots for event: " +(err.error||err));
-				return;
-			}
+			if (err) return reportError('listing time slots for event',err);
 			callback(res);
 		});
 	};
@@ -347,22 +288,14 @@ var ConTroll = (function(w,d){
 			// submit hosts directly - assumes a host is an object with either email or id fields and optionally a name - like api wants 
 			data.hosts = hosts; 
 		this.api.create(this.collection, data, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error creating a new time slot: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('creating a time slot',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTimeslots.prototype.remove = function(id, fields, callback) {
 		this.api.del(this.collection, id, fields, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error removing a time slot: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('removing a time slot',err);
 			callback(res);
 		});
 	};
@@ -379,33 +312,21 @@ var ConTroll = (function(w,d){
 	
 	ConTrollTickets.prototype.forEvent = function(eventId, callback) {
 		this.api.get(this.collection, '?all=1&is-valid=1&by_event=' + eventId, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting tickets for event: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('listing tickets for event',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTickets.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting tickets for event: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('listing tickets',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollTickets.prototype.remove = function(id, refundTypeId, callback) {
 		this.api.del(this.collection, id + '?refund-coupon-type='+ refundTypeId, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error removing a ticket: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('cancelling a ticket',err);
 			callback(res);
 		});
 	};
@@ -422,11 +343,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollCouponTypes.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				//if (err != 'CORS error') alert("Error getting coupons types: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('Listing coupon types',err);
 			callback(res);
 		});
 	};
@@ -443,22 +360,14 @@ var ConTroll = (function(w,d){
 	
 	ConTrollCoupons.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting coupons: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('listing coupons',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollCoupons.prototype.forType = function(typeId, callback) {
 		this.api.get(this.collection, '?by_type=' + typeId, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting coupons: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('listing coupons for coupon type',err);
 			callback(res);
 		});
 	};
@@ -469,22 +378,14 @@ var ConTroll = (function(w,d){
 				user: user
 			};
 		this.api.create(this.collection, data, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error creating coupon: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('Adding a coupon',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollCoupons.prototype.remove = function(typeId, callback) {
 		this.api.del(this.collection, typeId, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error creating coupon: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('deleting a coupon',err);
 			callback(res);
 		});
 	};
@@ -501,10 +402,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollLocations.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing locations',err);
 			callback(res);
 		});
 	};
@@ -515,10 +413,7 @@ var ConTroll = (function(w,d){
 			area: area,
 			"max-attendees": max_attendees
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('adding a location',err);
 			callback(res);
 		});
 	}
@@ -529,20 +424,14 @@ var ConTroll = (function(w,d){
 			area: area,
 			"max-attendees": max_attendees
 		}, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('updating a location',err);
 			callback(res);
 		});
 	}
 	
 	ConTrollLocations.prototype.remove = function(id, callback) {
 		this.api.del(this.collection, id, function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('removing a location',err);
 			callback(res);
 		});
 	}
@@ -555,10 +444,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollConventions.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing conventions',err);
 			callback(res);
 		});
 	};
@@ -569,10 +455,7 @@ var ConTroll = (function(w,d){
 	 */
 	ConTrollConventions.prototype.getCurrent = function(callback) {
 		this.api.get(this.collection, 'self', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('getting current convention',err);
 			callback(res);
 		});
 	}
@@ -589,11 +472,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollMerchandise.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error getting merchandise catalog: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('listing merchandise SKUs',err);
 			callback(res);
 		});
 	};
@@ -606,22 +485,14 @@ var ConTroll = (function(w,d){
 				description: description
 			};
 		this.api.create(this.collection, data, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error creating a new SKU: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('creating merchandise SKU',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollMerchandise.prototype.remove = function(id, callback) {
 		this.api.del(this.collection, id, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error deleting an SKU: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('deleting merchandise SKU',err);
 			callback(res);
 		});
 	};
@@ -631,11 +502,7 @@ var ConTroll = (function(w,d){
 			title: title,
 			price: price
 		}, function(res, err){
-			if (err) {
-				console.log('Error', err.error || err);
-				if (err != 'CORS error') alert("Error updating an SKU: " + (err.error||err));
-				return;
-			}
+			if (err) return reportError('updating merchandise SKU',err);
 			callback(res);
 		});
 	};
@@ -652,30 +519,21 @@ var ConTroll = (function(w,d){
 	
 	ConTrollManagers.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing managers',err);
 			callback(res);
 		});
 	};
 	
 	ConTrollManagers.prototype.add = function(userObj, callback) {
 		this.api.create(this.collection, userObj, function(res,err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('adding a manager',err);
 			callback(res);
 		});
 	}
 	
 	ConTrollManagers.prototype.remove = function(id, callback) {
 		this.api.del(this.collection, id, function(res,err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('removing a manager',err);
 			callback(res);
 		});
 	}
@@ -692,10 +550,7 @@ var ConTroll = (function(w,d){
 	
 	ConTrollUsers.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('listing users',err);
 			callback(res);
 		});
 	};
@@ -710,10 +565,7 @@ var ConTroll = (function(w,d){
 			email: email,
 			phone: phone
 		}, function(res,err){
-			if (err) {
-				console.log('Error', err.error || err);
-				return;
-			}
+			if (err) return reportError('creating a new user profile',err);
 			callback(res);
 		});
 	}
