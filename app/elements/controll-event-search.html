@@ -61,7 +61,7 @@
 	<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
 		<paper-item class="layout horizontal" tabindex="-1">
 			<paper-icon-button icon="add-shopping-cart" on-tap="addToCart"></paper-icon-button>
-			<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
+			<paper-icon-button icon="launch" on-tap="showEvent"></paper-icon-button>
 			<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
 			<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
 			<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
