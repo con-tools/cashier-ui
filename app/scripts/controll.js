@@ -325,7 +325,7 @@ var ConTroll = (function(w,d){
 	};
 	
 	ConTrollTickets.prototype.forUser = function(user_id, callback) {
-		this.api.get(this.collection, '?user=' + user_id, function(res, err) {
+		this.api.get(this.collection, '?is-valid=1&user=' + user_id, function(res, err) {
 			if (err) return reportError('listing tickets for user',err);
 			callback(res);
 		});
