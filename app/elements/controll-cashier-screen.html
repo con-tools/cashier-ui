@@ -5,6 +5,9 @@
 <template>
 	<style is="custom-style" include="shared-styles"></style>
 	<style>
+	paper-input {
+		margin: 0 0.7em;
+	}
 	</style>
 	
 	<paper-material elevation="1" lang="he">
@@ -14,9 +17,10 @@
 	<paper-material elevation="1" lang="he">
 	<h2>כרטיס שחקן</h2>
 	<iron-collapse id="currentUser">
-		<paper-item>
-			<paper-input readonly label="שם" value="[[user.name]]"></paper-input>
-			<paper-input readonly label="דואל" value="[[user.email]]"></paper-input>
+		<paper-item tabindex="-1" layout="horizontal flexible">
+			<paper-icon-button icon="backspace" on-tap="resetUser"></paper-icon-button>
+			<paper-input readonly class="flex" label="שם" value="[[user.name]]"></paper-input>
+			<paper-input readonly class="flex" label="דואל" value="[[user.email]]"></paper-input>
 			<paper-input readonly label="טלפון" value="[[user.phone]]"></paper-input>
 		</paper-item>
 	</iron-collapse>
@@ -41,7 +45,8 @@ Polymer({
 	properties : {
 		user : {
 			type: Object,
-			observer: 'updateUser'
+			observer: 'updateUser',
+			notify: true
 		}
 	},
 
@@ -54,8 +59,24 @@ Polymer({
 	},
 	
 	updateUser : function(user) {
-		this.$.currentUser.show();
-		this.$.users.hide();
+		if (user && user.id) {
+			this.$.currentUser.show();
+			this.$.users.hide();
+			this.$.events.show();
+		} else {
+			this.$.currentUser.hide();
+			this.$.users.show();
+			this.$.events.hide();
+		}
+		app.fire('user-profile-changed');
+	},
+	
+	resetUser : function() {
+		this.set('user',null);
+		this.$.currentUser.hide();
+		this.$.users.show();
+		this.$.events.hide();
 	}
+	
 });
 </script>
