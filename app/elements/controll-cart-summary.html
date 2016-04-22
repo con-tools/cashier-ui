@@ -47,6 +47,10 @@
 		</tbody>
 		</table>
 		
+		<paper-button on-tap="clearCart">
+			<iron-icon icon="clear"></iron-icon>
+			הסר הכל
+		</paper-button>
 	</paper-material>
 </template>
 </dom-module>
@@ -100,6 +104,12 @@
 		
 		decTickets : function(event) {
 			app.updateCartAmount(event.model.ticket.id, parseInt(event.model.ticket.amount) - 1);
+		}, 
+		
+		clearCart : function() {
+			if (this.cartDisplay.length <= 0)
+				return;
+			app.updateCartAmount(this.cartDisplay[0].id, 0, this.clearCart.bind(this));
 		}
 	});
 </script>

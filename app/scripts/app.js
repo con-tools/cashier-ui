@@ -1,5 +1,13 @@
+'use strict';
+
+ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');
+ConTroll.ifAuth(function(){
+	ConTroll.getUserEmail(function(email){
+		console.log("User authenticated as " + email);
+	})
+});
+
 (function(document) {
-	'use strict';
 	
 	var Catalog = function(catalogName) {
 		this.catalog = catalogName;
@@ -64,18 +72,6 @@
 	Catalog.prototype.invalidate = function() {
 		this.content = null;
 		this.callbacks = [];
-	};
-	
-	var ShoppingCart = function() {
-		this.items = [];
-		return this;
-	};
-	
-	ShoppingCart.prototype.add = function (timeslot) {
-		this.items.push({
-			tickets: 1,
-			timeslot: timeslot
-		});
 	};
 	
 	var app = document.querySelector('#app');
@@ -204,12 +200,9 @@
 		}).bind(this));
 	};
 	
+	app.logout = function() {
+		ConTroll.logout('/');
+	};
+	
 	app.addEventListener('user-profile-changed', app.updateCart.bind(app), false);
-
-	ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');
-	ConTroll.ifAuth(function(){
-		ConTroll.getUserEmail(function(email){
-			console.log("User authenticated as " + email);
-		})
-	});
 })(document);

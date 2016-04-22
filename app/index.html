@@ -81,9 +81,12 @@
             <iron-icon icon="perm-identity"></iron-icon>
             <span>Profiles</span>
           </a>
+       	<paper-button on-tap="logout">
+       		<iron-icon class="mirror-icon" icon="exit-to-app"></iron-icon>
+       		יציאה
+       	</paper-button>
         </paper-menu>
         
-        <paper-button lang="he" on-tap="logout"><iron-icon icon="exit-to-app"></iron-icon>יציאה</paper-button>
         
         <controll-cart-summary cart-items="{{cart}}"></controll-cart-summary>
         
