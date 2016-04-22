@@ -29,7 +29,6 @@ var ConTroll = (function(w,d){
 	
 	ConTrollAuth.prototype.verify = function(callback) {
 		this.api.send('auth/verify', function(res, err){
-			if (err) return reportError('Auth verification',err);
 			callback(res.status);
 		});
 	};
@@ -77,7 +76,7 @@ var ConTroll = (function(w,d){
 	 */
 	ConTrollAuth.prototype.id = function(callback) {
 		this.api.send('auth/id', function(res, err){
-			if (err) return reportError('getting login id',err);
+			if (err) return callback({status: false});
 			callback(res);
 		});
 	};
