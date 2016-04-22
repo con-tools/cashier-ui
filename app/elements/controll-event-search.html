@@ -38,38 +38,38 @@
 	}
 	</style>
 	
-	<iron-pages id="loader" attr-for-selected="id" selected="now-loading">
+	<iron-pages id="loader" attr-for-selected="id" selected="now-loading" lang="he">
 	
-	<paper-material lang="he" id="now-loading">
-		<paper-item>
+	<div id="now-loading">
+		<paper-item tabindex="-1">
 			<paper-spinner active></paper-spinner>
 			<strong>נא להמתין בזמן שמידע נטען...</strong>
 		</paper-item>
-	</paper-material>
+	</div>
 	
-	<paper-material lang="he" id="search-form">
-		<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
-		<paper-item>
+	<div lang="he" id="search-form">
+		<paper-item tabindex="-1">
+			<paper-icon-button tabindex="-1" icon="backspace" on-tap="resetSearch"></paper-icon-button>
 			<paper-input name="name" label="שם" on-keyup="doSearch" id="searchName">
 		</paper-item>
-	</paper-material>
+	</div>
+	
 	</iron-pages>
 	
-	<paper-toast id="addedToCart" text="Added {{timeslotTitle}} to cart" duration="0"></paper-toast>
+	<paper-toast id="addedToCart" text="מוסיף {{timeslotTitle}} לעגלת הקניות" duration="0"></paper-toast>
 	
-	<paper-material lang="he">
-		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
-			<paper-item class="layout horizontal">
-				<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
-				<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
-				<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
-				<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
-				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
-				<strong on-tap="popupEventView">התחלה:</strong>
-				<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
-			</paper-item>
-		</template>
-	</paper-material>
+	<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
+		<paper-item class="layout horizontal" tabindex="-1">
+			<paper-icon-button icon="add-shopping-cart" on-tap="addToCart"></paper-icon-button>
+			<paper-icon-button icon="exit-to-app" on-tap="showEvent"></paper-icon-button>
+			<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
+			<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
+			<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
+			<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
+			<strong on-tap="popupEventView">התחלה:</strong>
+			<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
+		</paper-item>
+	</template>
 	
 	<paper-dialog id="eventView" lang="he">
 		<paper-item>
@@ -149,6 +149,14 @@ Polymer({
 		this.filterBySearch();
 	},
 	
+	resetSearch : function() {
+		this.$.searchName.value = '';
+		this.doSearch();
+		window.setTimeout((function(){
+			this.$.searchName.$.input.focus();
+		}).bind(this),750);
+	},
+	
 	doSearch : function() {
 		this.filterBySearch(this.$.searchName.value);
 	},
@@ -173,6 +181,9 @@ Polymer({
 	addToCart : function(ev) {
 		this.timeslotTitle = ev.model.timeslot.event.title;
 		this.$.addedToCart.open();
+		app.addToCart(ev.model.timeslot, (function(){
+			this.$.addedToCart.close();
+		}).bind(this));
 	},
 	
 	showEvent : function(ev) {
