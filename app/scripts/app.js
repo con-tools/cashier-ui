@@ -150,7 +150,7 @@
 	};
 	
 	app.dejsonify = Catalog.prototype.dejsonify; // expose to other modules
-
+	
 	app.timeslot_rounds = {
 	                            'ראשון בוקר'	: [ moment("2016-04-24 09:00"), moment("2016-04-24 14:00")],
 	                            'ראשון צהריים'	: [ moment("2016-04-24 14:00"), moment("2016-04-24 19:00")],
@@ -170,9 +170,17 @@
 	};
 	
 	app.addToCart = function(timeslot) {
-		timeslot.amount = 1;
-		timeslot.price = this.event.price;
-		this.push('cart', timeslot);
+		var user = this.$.cashier.user;
+		ConTroll.tickets.addToCart(timeslot.id, user.id, this.updateCart.bind(this));
+	};
+	
+	app.updateCart = function() {
+		if (this.$.cashier.user)
+			ConTroll.tickets.forUser(this.$.cashier.user.id, (function(tickets){
+				this.set('cart', tickets);
+			}).bind(this));
+		else
+			this.set('cart',[]);
 	};
 	
 	app.updatecartAmount = function(timeslotid, amount) {
@@ -183,6 +191,8 @@
 			this.set('cart.' + i + '.amount', amount);
 		}
 	}
+	
+	app.addEventListener('user-profile-changed', app.updateCart.bind(app), false);
 
 	ConTroll.setConvention('M2UyZjJlNzE2M2RkYmVkZWZiYjkzZDRiZGJmOGVlNzM1YjBlN2ZkNQ');
 	ConTroll.ifAuth(function(){
