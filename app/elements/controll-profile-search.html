@@ -12,17 +12,16 @@
 
 	<iron-pages id="loader" attr-for-selected="id" selected="now-loading" lang="he">
 
-		<paper-material id="now-loading">
+		<div id="now-loading">
 			<paper-item>
 				<paper-spinner active></paper-spinner>
 				<strong>נא להמתין בזמן שמידע נטען...</strong>
 			</paper-item>
-		</paper-material>
+		</div>
 
 		<div id="search-form">
-	
 			<div>
-				<paper-input name="saerch" label="חיפוש" on-keyup="doSearch" id="searchName">
+				<paper-input name="user-search" autofocus label="חיפוש" on-keyup="doSearch" id="searchName">
 			</div>
 			
 			<template is="dom-repeat" items="{{displayUsers}}" as="user">
@@ -33,7 +32,33 @@
 				</paper-item>
 			</template>
 			
+			<div>
+				<paper-button on-tap="startAddUser">
+					<iron-icon icon="add-circle"></iron-icon>
+					כרטיס משתמש חדש
+				</paper-button>
+			</div>
 		</div>
+		
+	</iron-pages>
+	
+	<paper-dialog id="addUserDialog" lang="he">
+		<h3>פתיחת כרטיס משתמש חדש</h3>
+		<paper-item tabindex="">
+			<paper-input label="שם" id="addUserName"></paper-input>
+		</paper-item>
+		<paper-item tabindex="-1">
+			<paper-input label="דואל" id="addUserEmail"></paper-textarea>
+		</paper-item>
+		<paper-item tabindex="-1">
+			<paper-input label="טלפון" id="addUserPhone"></paper-textarea>
+		</paper-item>
+		<paper-item tabindex="-1">
+			<paper-button on-tap="finishAddUser" raised><iron-icon icon="check"></iron-icon>אישור</paper-button>
+			<paper-button on-tap="startAddUser" raised><iron-icon icon="close"></iron-icon>ביטול</paper-button>
+		</paper-item>
+	</paper-dialog>
+	
 </template>
 </dom-module>
 
@@ -72,7 +97,9 @@ Polymer({
 	},
 	
 	changeUser : function() {
-		this.$.searchName.focus();
+		this.$.searchName.value = '';
+		this.doSearch();
+		window.setTimeout((function(){ this.$.searchName.$.input.focus(); }).bind(this),750);
 	},
 	
 	selectUser : function(event) {
@@ -105,6 +132,37 @@ Polymer({
 			});
 			return matches.length > 0;
 		}));
-	}
+	},
+	
+	startAddUser : function() {
+		this.$.addUserName.value = '';
+		this.$.addUserEmail.value = '';
+		this.$.addUserPhone.value = '';
+		this.$.addUserDialog.toggle();
+		window.setTimeout((function(){
+			this.$.addUserName.$.input.focus();
+		}).bind(this),750);
+	},
+	
+	finishAddUser : function() {
+		if (!this.$.addUserName.value) {
+			alert("שם לא חוקי!");
+			return;
+		}
+		if (!this.$.addUserEmail.value && confirm('לא הוכנסה כתובת דואר אלטרוני, להמשיך בלי כתובת?')) {
+			this.$.addUserEmail.value = 'customer-' + moment().format('YMMDD') + '.' + Math.random().toString(36).substr(2, 8) + '@bigor.org.il';
+		}
+		
+		if (!this.$.addUserEmail.value.match(/@/)){
+			alert("דואל לא חוקי!");
+			return;
+		}
+		
+		return ConTroll.users.create(this.$.addUserName.value, this.$.addUserEmail.value, this.$.addUserPhone.value, (function() {
+			app.invalidateCatalog('users');
+			this.startAddUser();
+			this.ready();
+		}).bind(this));
+	},
 });
 </script>
