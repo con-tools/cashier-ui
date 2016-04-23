@@ -39,6 +39,17 @@
 	}
 	</style>
 	
+	<iron-pages id="loader" attr-for-selected="id" selected="now-loading" lang="he">
+	
+	<div id="now-loading">
+		<paper-item tabindex="-1">
+			<paper-spinner active></paper-spinner>
+			<strong>נא להמתין בזמן שמידע נטען...</strong>
+		</paper-item>
+	</div>
+	
+	<div lang="he" id="user-display">
+
 	<div class="hide-in-print">
 		<paper-button raised on-tap="doPrint">
 			<iron-icon icon="print"></iron-icon>
@@ -102,6 +113,8 @@
 		</template>
 	</div>
 	
+	</div>
+	
 </template>
 </dom-module>
 
@@ -128,6 +141,7 @@ Polymer({
 	},
 
 	ready : function() {
+		this.$.loader.selected = 'now-loading';
 		this.updateUserId();
 	},
 
@@ -160,7 +174,8 @@ Polymer({
 	},
 	
 	populateUserData : function(user) {
-		app.fire('user-profile-changed', {user: user});
+		if (!this.user || this.user.id != user.id)
+			app.fire('user-profile-changed', {user: user});
 		this.set('coupons', user.coupons.map(function(coupon){
 			coupon.cssUsageClass = coupon.used ? 'used' : 'unused';
 			return coupon;
@@ -181,6 +196,7 @@ Polymer({
 			return ticket.status == 'reserved' || ticket.status == 'processing';
 		}));
 		this.set('user', user);
+		this.$.loader.selected = 'user-display';
 	},
 	
 	doPrint : function() {
