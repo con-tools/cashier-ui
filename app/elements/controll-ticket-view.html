@@ -29,7 +29,22 @@
 	.used {
 		text-decoration: line-through;
 	}
+	.hide-in-print paper-button {
+		margin-bottom: 1em;
+	}
+	@MEDIA print {
+		.hide-in-print {
+			display: none;
+		}
+	}
 	</style>
+	
+	<div class="hide-in-print">
+		<paper-button raised on-tap="doPrint">
+			<iron-icon icon="print"></iron-icon>
+			הדפסה
+		</paper-button>
+	</div>
 	
 	<paper-material class="user-details" elevation="3">
 	<paper-item tabindex="-1">
@@ -46,18 +61,20 @@
 	</paper-item>
 	</paper-material>
 	
-	<h3>קופונים</h3>
-	<template is="dom-repeat" items="{{coupons}}" as="coupon">
-		<paper-item class="layout horizontal" tabindex="-1">
-			<strong>סוג:</strong>
-			<div>{{coupon.type.title}}</div>
-			<strong>שווי:</strong>
-			<div class$="{{coupon.cssUsageClass}}">{{coupon.value}}</div>
-			<template is="dom-if" if="{{coupon.used}}">
-				<strong>נפדה</strong>
-			</template>
-		</paper-item>
-	</template>
+	<div class="hide-in-print">
+		<h3>קופונים</h3>
+		<template is="dom-repeat" items="{{coupons}}" as="coupon">
+			<paper-item class="layout horizontal" tabindex="-1">
+				<strong>סוג:</strong>
+				<div>{{coupon.type.title}}</div>
+				<strong>שווי:</strong>
+				<div class$="{{coupon.cssUsageClass}}">{{coupon.value}}</div>
+				<template is="dom-if" if="{{coupon.used}}">
+					<strong>נפדה</strong>
+				</template>
+			</paper-item>
+		</template>
+	</div>
 	
 	<h3>כרטיסים</h3>
 	<template is="dom-repeat" items="{{tickets}}" as="ticket">
@@ -69,19 +86,21 @@
 		</paper-item>
 	</template>
 
-	<h3>עגלת קניות</h3>
-	<template is="dom-repeat" items="{{shoppingCart}}" as="ticket">
-		<paper-item class="layout horizontal" tabindex="-1">
-			<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
-			<div class="price table-field" on-tap="popupEventView">&#8362;[[ticket.price]]</div>
-			<div class="roundText table-field" on-tap="popupEventView">
-				<iron-icon icon="history"></iron-icon>
-				<span>[[ticket.timeslot.round]]</span>
-			</div>
-			<strong on-tap="popupEventView">התחלה:</strong>
-			<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
-		</paper-item>
-	</template>
+	<div class="hide-in-print">
+		<h3>עגלת קניות</h3>
+		<template is="dom-repeat" items="{{shoppingCart}}" as="ticket">
+			<paper-item class="layout horizontal" tabindex="-1">
+				<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
+				<div class="price table-field" on-tap="popupEventView">&#8362;[[ticket.price]]</div>
+				<div class="roundText table-field" on-tap="popupEventView">
+					<iron-icon icon="history"></iron-icon>
+					<span>[[ticket.timeslot.round]]</span>
+				</div>
+				<strong on-tap="popupEventView">התחלה:</strong>
+				<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
+			</paper-item>
+		</template>
+	</div>
 	
 </template>
 </dom-module>
@@ -119,7 +138,7 @@ Polymer({
 	
 	reloadUserData : function() {
 		if (this.get('userId'))
-			this.updateUserId(':' + this.get('userId'));
+			ConTroll.users.get(this.get('userId'), this.populateUserData.bind(this));
 	},
 	
 	updateUserId : function(id) {
@@ -162,6 +181,10 @@ Polymer({
 			return ticket.status == 'reserved' || ticket.status == 'processing';
 		}));
 		this.set('user', user);
+	},
+	
+	doPrint : function() {
+		window.print();
 	}
 });
 </script>
