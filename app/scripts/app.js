@@ -135,6 +135,7 @@ ConTroll.ifAuth(function(){
 	  for (var catalog in app.controllCatalogs)
 		  app.controllCatalogs[catalog].invalidate();
 	  app.fire('please-refresh-lists');
+	  app.fire('cart-updated');
 	};
 	
 	app.controllCatalogs = {};
