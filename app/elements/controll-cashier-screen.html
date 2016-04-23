@@ -65,11 +65,11 @@
 			האם התקבל תשלום מלא במזומן מהלקוח?
 		</p>
 		<div class="layout horizontal">
-			<paper-button class="flex" raised on-tap="cacheOutComplete">
+			<paper-button class="flex" raised on-tap="cashOutComplete">
 				<iron-icon icon="check-circle"></iron-icon>
 				אישור
 			</paper-button>
-			<paper-button class="flex" raised on-tap="cacheOut">
+			<paper-button class="flex" raised on-tap="cashOut">
 				<iron-icon icon="cancel"></iron-icon>
 				ביטול
 			</paper-button>
@@ -168,7 +168,7 @@ Polymer({
 		this.$.cashCheckout.toggle();
 	},
 	
-	cacheOutComplete : function() {
+	cashOutComplete : function() {
 		ConTroll.cashout(this.get('user').id, this.get('cartTotal'), (function(res){
 			this.$.cashCheckout.toggle();
 			if (!res.status) {
