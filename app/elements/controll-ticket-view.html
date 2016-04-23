@@ -129,7 +129,9 @@ Polymer({
 	},
 	
 	populateUserData : function(user) {
-		this.set('coupons', user.coupons);
+		this.set('coupons', user.coupons.filter(function(coupon){
+			return !coupon.used;
+		}));
 		var tickets = user.tickets.map(function(ticket){
 			ticket = app.dejsonify(ticket);
 			ticket.timeslot.displayTime = moment(ticket.timeslot.start).format("MMM D, YYYY HH:mm");
