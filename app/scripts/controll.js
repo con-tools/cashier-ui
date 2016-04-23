@@ -327,6 +327,13 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
+	ConTrollTickets.prototype.forTimeslot = function(timeslotId, callback) {
+		this.api.get(this.collection, '?all=1&is-valid=1&by_timeslot=' + eventId, function(res, err) {
+			if (err) return reportError('listing tickets for timeslot',err);
+			callback(res);
+		});
+	};
+	
 	ConTrollTickets.prototype.catalog = function(callback) {
 		this.api.get(this.collection, '', function(res, err) {
 			if (err) return reportError('listing tickets',err);
