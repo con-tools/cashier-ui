@@ -90,6 +90,9 @@
 	<h3>כרטיסים</h3>
 	<template is="dom-repeat" items="{{tickets}}" as="ticket">
 		<paper-item class="layout horizontal" tabindex="-1">
+			<div class="hide-in-print">
+				<paper-icon-button icon="clear" title="ביטול כרטיס" on-tap="cancelTicket"></paper-icon-button>
+			</div>
 			<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
 			<div on-tap="popupEventView">
 				<iron-icon icon="event-seat"></iron-icon>
@@ -122,6 +125,25 @@
 	</div>
 	
 	</div>
+	</iron-pages>
+	
+	<paper-dialog id="refundTicketDialog">
+		<h2>ביטול כרטיס</h2>
+		<p>
+			האם לבטל <span>[[refundTicket.amount]]</span> כרטיס(ים) ל"<span>[[refundTicket.timeslot.event.title]]</span>"
+			תמורת קופון "החלפת כרטיס" בסך <span>₪[[refundTicket.price]]?</span>
+		</p>
+		<div class="layout horizontal">
+			<paper-button class="flex" raised on-tap="refundTicketApprove">
+				<iron-icon icon="check-circle"></iron-icon>
+				אישור
+			</paper-button>
+			<paper-button class="flex" raised on-tap="cancelTicket">
+				<iron-icon icon="cancel"></iron-icon>
+				ביטול
+			</paper-button>
+		</div>
+	</paper-dialog>
 	
 </template>
 </dom-module>
@@ -145,6 +167,9 @@ Polymer({
 		},
 		shoppingCart : {
 			type: Array
+		},
+		refundTicket : {
+			type: Object
 		}
 	},
 
@@ -209,6 +234,20 @@ Polymer({
 	
 	doPrint : function() {
 		window.print();
-	}
+	},
+	
+	cancelTicket : function(event) {
+		this.set('refundTicket', (event && event.model) ? event.model.ticket : null);
+		this.$.refundTicketDialog.toggle();
+	},
+	
+	refundTicketApprove : function() {
+		ConTroll.tickets.remove(this.get('refundTicket').id, 32, // refund ticket type id, as seen on con-troll.org/#!/coupons
+				(function(){
+					this.$.refundTicketDialog.toggle();
+					this.reloadUserData();
+					app.sendRefreshEvent();
+				}).bind(this));
+	},
 });
 </script>
