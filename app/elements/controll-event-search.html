@@ -11,6 +11,9 @@
 	strong {
 		padding: 0 2em;
 	}
+	paper-item paper-input {
+		margin: 0 1em;
+	}
 	.roundText {
 		width: 6.5em;
 	}
@@ -54,7 +57,19 @@
 	<div lang="he" id="search-form">
 		<paper-item tabindex="-1">
 			<paper-icon-button tabindex="-1" icon="backspace" on-tap="resetSearch"></paper-icon-button>
-			<paper-input autofocus tabindex="11" name="name" label="שם" on-keyup="doSearch" id="searchName">
+			<div>
+				<paper-input autofocus tabindex="11" name="name" label="שם" on-keyup="doSearch" id="searchName">
+			</div>
+			<div>
+				<paper-dropdown-menu label="ז'אנר" horizontal-align="right">
+					<paper-menu class="dropdown-content" attr-for-selected="value" on-selected-changed="doSearch" id="searchGenre">
+						<paper-item value="">ללא סינון</paper-item>
+						<template is="dom-repeat" items="[[genres]]" as="genre">
+						<paper-item value="[[genre]]">[[genre]]</paper-item>
+						</template>
+					</paper-menu>
+				</paper-dropdown-menu>
+			</div>
 		</paper-item>
 		
 		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
@@ -118,17 +133,25 @@ Polymer({
 			value: function() { return []; }
 		},
 		timeslotTitle : String,
-		viewedEvent : Object
+		viewedEvent : Object,
+		genres : Array
 	},
 	
 	ready : function(event) {
 		this.$.loader.selected = 'now-loading';
 		this.set('timeslots',[]);
 		app.getCatalog('timeslots',this.populateTimeslots.bind(this));
+		ConTroll.tags.getType("ז'אנר", this.populateGenreTag.bind(this));
 	},
 	
 	attached : function(event) {
 		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
+	},
+	
+	populateGenreTag : function(systemtag) {
+		this.set('genres', systemtag.values.sort(function(a,b){
+			return a.localeCompare(b);
+		}));
 	},
 	
 	populateTimeslots : function(timeslots) {
@@ -168,15 +191,19 @@ Polymer({
 	},
 	
 	doSearch : function() {
-		this.filterBySearch(this.$.searchName.value);
+		this.filterBySearch(this.$.searchName.value, this.$.searchGenre.selected);
 	},
 	
-	filterBySearch : function(title) {
-		var re = new RegExp(title);
+	filterBySearch : function(title, genre) {
+		var title_re = new RegExp(title),
+			self = this;
 		this.filteredTimeslots = this.timeslots.filter(function(ts){
 			return ts.event.status == 5 && 
 				(title || ts.available_tickets > 0) && 
-				ts.event.title.match(re);
+				ts.event.title.match(title_re) &&
+				(!genre || (ts.event.tags["ז'אנר"] && ts.event.tags["ז'אנר"].filter(function(genretag){
+					return genretag == genre;
+				}).length > 0));
 		});
 	},
 	
