@@ -72,7 +72,12 @@
 			</div>
 			<div>
 				<paper-checkbox id="searchCurrentRound" on-change="doSearch">
-				סבב נוכחי
+				&nbsp;&nbsp;סבב נוכחי
+				</paper-checkbox>
+			</div>
+			<div>
+				<paper-checkbox id="searchHidePastEvents" on-change="doSearch" checked>
+				&nbsp;&nbsp;רק ארועים נוכחיים או עתידיים
 				</paper-checkbox>
 			</div>
 		</paper-item>
@@ -184,7 +189,7 @@ Polymer({
 			return moment(a.start).valueOf() - moment(b.start).valueOf();
 		}));
 		this.$.loader.selected = 'search-form';
-		this.filterBySearch();
+		this.doSearch();
 	},
 	
 	resetSearch : function() {
@@ -196,12 +201,16 @@ Polymer({
 	},
 	
 	doSearch : function() {
-		this.filterBySearch(this.$.searchName.value, this.$.searchGenre.selected, this.$.searchCurrentRound.checked);
+		this.filterBySearch(this.$.searchName.value,
+				this.$.searchGenre.selected,
+				this.$.searchCurrentRound.checked,
+				this.$.searchHidePastEvents.checked);
 	},
 	
-	filterBySearch : function(title, genre, currentRound) {
+	filterBySearch : function(title, genre, currentRound, hidePast) {
 		var title_re = new RegExp(title),
 			self = this;
+		var now = new Date();
 		this.filteredTimeslots = this.timeslots.filter(function(ts){
 			return ts.event.status == 5 && 
 				(title || ts.available_tickets > 0) && 
@@ -210,7 +219,9 @@ Polymer({
 					return genretag == genre;
 				}).length > 0)) && 
 				// this round, or the round that will start in the next hour
-				(!currentRound || ts.round == (app.getRound(new Date("2016-04-24 09:15")) || app.getRound(new Date(Date.now() + 3600000)))); 
+				(!currentRound || ts.round == (app.getRound(now) || app.getRound(new Date(now.getTime() + 3600000)))) &&
+				// starts less than half an hour ago
+				(!hidePast || (now.getTime() - moment(ts.start).valueOf()) < -1800000);
 		});
 	},
 	
