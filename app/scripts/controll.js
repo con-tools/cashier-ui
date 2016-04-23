@@ -276,6 +276,17 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
+	ConTrollTickets.prototype.forTimeslot = function(timeslotId, callback) {
+		this.api.get(this.collection, '?all=1&is-valid=1&by_timeslot=' + timeslotId, function(res, err) {
+			if (err) {
+				console.log('Error', err.error || err);
+				if (err != 'CORS error') alert("Error getting tickets for event: " + (err.error||err));
+				return;
+			}
+			callback(res);
+		});
+	};
+	
 	ConTrollTimeslots.prototype.create = function(event_id, start_time, duration, locations, hosts, callback) {
 		var data = {
 				event: event_id,
