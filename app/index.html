@@ -64,22 +64,22 @@
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">Menu</span>
+          <span class="menu-name">תפריט</span>
         </paper-toolbar>
 
         <!-- Drawer Content -->
         <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
           <a data-route="home" href="{{baseUrl}}home">
             <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
+            <span>קופה</span>
           </a>
           <a data-route="event-search" href="{{baseUrl}}event-search">
             <iron-icon icon="event"></iron-icon>
-            <span>Events</span>
+            <span>ארועים</span>
           </a>
           <a data-route="profile-search" href="{{baseUrl}}profile-search">
             <iron-icon icon="perm-identity"></iron-icon>
-            <span>Profiles</span>
+            <span>כרטיסי משתמש</span>
           </a>
        	<paper-button on-tap="logout">
        		<iron-icon class="mirror-icon" icon="exit-to-app"></iron-icon>
