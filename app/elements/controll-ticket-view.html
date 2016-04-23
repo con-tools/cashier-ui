@@ -91,6 +91,10 @@
 	<template is="dom-repeat" items="{{tickets}}" as="ticket">
 		<paper-item class="layout horizontal" tabindex="-1">
 			<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
+			<div on-tap="popupEventView">
+				<iron-icon icon="event-seat"></iron-icon>
+				[[ticket.amount]]
+			</div>
 			<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[ticket.timeslot.round]]</span></div>
 			<strong on-tap="popupEventView">התחלה:</strong>
 			<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
@@ -102,6 +106,10 @@
 		<template is="dom-repeat" items="{{shoppingCart}}" as="ticket">
 			<paper-item class="layout horizontal" tabindex="-1">
 				<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
+				<div on-tap="popupEventView">
+					<iron-icon icon="event-seat"></iron-icon>
+					[[ticket.amount]]
+				</div>
 				<div class="price table-field" on-tap="popupEventView">&#8362;[[ticket.price]]</div>
 				<div class="roundText table-field" on-tap="popupEventView">
 					<iron-icon icon="history"></iron-icon>
