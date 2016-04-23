@@ -170,7 +170,7 @@ ConTroll.ifAuth(function(){
 	app.addToCart = function(timeslot, callback) {
 		var user = this.$.cashier.user;
 		// check that we don't already have this in the cart
-		var i = this.cart.findIndex(function(t){ return t.timeslot.id == timeslot.id; });
+		var i = this.cart.findIndex(function(t){ return t.status == 'reserved' && t.timeslot.id == timeslot.id; });
 		if (i < 0) {
 			ConTroll.tickets.addToCart(timeslot.id, user.id, (function(ticket){
 				this.updateCart({ detail: {ticket: ticket} });
