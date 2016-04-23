@@ -91,6 +91,10 @@
 					<iron-icon icon="event-seat"></iron-icon>
 					<span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span>
 				</div>
+				<div class="table-field" on-tap="popupEventView">
+					<iron-icon icon="expand-more"></iron-icon>
+					[[timeslot.min_attendees]]
+				</div>
 				<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
 				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
 				<strong on-tap="popupEventView">התחלה:</strong>
