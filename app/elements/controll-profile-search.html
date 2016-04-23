@@ -163,6 +163,7 @@ Polymer({
 			this.startAddUser();
 			this.ready(); // reload the user list anyway
 			this.set('user', user); // notify
+			app.fire('please-refresh-lists'); // cause cashier screen and profile search to reload users;
 		}).bind(this));
 	},
 });
