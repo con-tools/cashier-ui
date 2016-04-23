@@ -11,6 +11,17 @@
 	.actions {
 		margin-bottom: .5em
 	}
+	.iframeholder {
+		width: 95%;
+		min-height: 80%;
+	}
+	.iframeholder iframe {
+		width: 95%;
+		margin: 10px;
+	}
+	paper-dialog {
+		min-width: 22em;
+	}
 	</style>
 	
 	<paper-material elevation="1" lang="he">
@@ -63,6 +74,42 @@
 				ביטול
 			</paper-button>
 		</div>
+	</paper-dialog>
+	
+	<paper-dialog id="creditCheckout" lang="he">
+		<h2>תשלום באשראי</h2>
+		<div>
+			<strong>סה"כ:</strong>
+			<span>₪[[cartTotal]]</span>
+		</div>
+		<p>
+			להתחיל תשלום באשראי?
+		</p>
+		<div class="layout horizontal">
+			<paper-button class="flex" raised on-tap="creditOutStart">
+				<iron-icon icon="check-circle"></iron-icon>
+				אישור
+			</paper-button>
+			<paper-button class="flex" raised on-tap="creditOut">
+				<iron-icon icon="cancel"></iron-icon>
+				ביטול
+			</paper-button>
+		</div>
+	</paper-dialog>
+	
+	<div style="display: none">
+		<form method="POST" action="http://api.con-troll.org/checkout" id="creditCheckoutForm" target="cc_checkout">
+			<input type="hidden" name="convention" value="">
+			<input type="hidden" name="token" value="">
+			<input type="hidden" name="ok" value="">
+			<input type="hidden" name="fail" value="">
+			<input type="hidden" name="user" value="">
+		</form>
+	</div>
+	
+	<paper-dialog id="creditCheckoutPayment" lang="he" class="iframeholder">
+		<iframe id="cc_checkout" name="cc_checkout" src="">
+		</iframe>
 	</paper-dialog>
 	
 </template>
@@ -132,7 +179,25 @@ Polymer({
 		}).bind(this));
 	},
 	
-	creditOut : function() {},
+	creditOut : function() {
+		if (!this.get('user') || !this.get('user').id) // sanity
+			return;
+		this.$.creditCheckout.toggle();
+	},
+	
+	creditOutStart : function() {
+		var form = document.getElementById('creditCheckoutForm');
+		form.elements['convention'].value = ConTroll.getConvention();
+		form.elements['token'].value = ConTroll.getAuthToken();
+		form.elements['ok'].value = window.location.protocol + '//' + window.location.host + '/cc_complete_ok.html';
+		form.elements['fail'].value = window.location.protocol + '//' + window.location.host + '/cc_complete_fail.html';
+		form.elements['user'].value = this.get('user').id;
+		this.$.creditCheckoutPayment.toggle();
+		window.setTimeout(function(){
+			document.getElementById('cc_checkout').style.height = (window.innerHeight - 140) + 'px';
+			form.submit();
+		}, 500);
+	},
 	
 });
 </script>
