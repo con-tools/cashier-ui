@@ -875,6 +875,16 @@ var ConTroll = (function(w,d){
 	}
 	
 	/**
+	 * Perform a cashout for the current cart of the specified user
+	 * @param userid Number ID of user
+	 * @param amount Number payout received
+	 * @param callback function(resonse) Callback to be triggered when cashout completes
+	 */
+	ConTroll.cashout = function(userid, amount, callback) {
+		api.send('/checkout/cashout', { user: userid, amount: amount }, callback, { convention: true }, 'POST');
+	}
+	
+	/**
 	 * Expose APIs
 	 */
 	ConTroll.records = new ConTrollRecords(api);
