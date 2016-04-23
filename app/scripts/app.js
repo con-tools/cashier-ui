@@ -189,6 +189,7 @@ ConTroll.ifAuth(function(){
 			}).bind(this));
 		else
 			this.set('cart',[]);
+		app.fire('cart-updated');
 	};
 	
 	app.updateCartAmount = function(ticketid, amount, callback) {
