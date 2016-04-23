@@ -15,6 +15,9 @@
 	.shopping-cart .authorized {
 		opacity: .5;
 	}
+	.shopping-cart .authorized .price{
+		display: none;
+	}
 	.shopping-cart .ticketcount .authorized {
 		display: none;
 	}
@@ -41,7 +44,7 @@
 					</td>
 					<td>[[ticket.amount]]</td>
 					<td>[[ticket.timeslot.event.title]]</td>
-					<td>₪[[ticket.price]]</td>
+					<td class="price">₪[[ticket.price]]</td>
 				</tr>
 			</template>
 		</tbody>
@@ -108,7 +111,10 @@
 				}).bind(this));
 			}
 			var totalCost = 0;
-			this.cartDisplay.forEach(function(ticket){ totalCost += parseFloat(ticket.price); });
+			this.cartDisplay.forEach(function(ticket){
+				if (ticket.status == 'reserved' || ticket.status == 'processing')
+					totalCost += parseFloat(ticket.price); 
+			});
 			this.set('total', parseInt(totalCost * 100)/100);
 		},
 		
