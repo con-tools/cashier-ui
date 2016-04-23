@@ -125,7 +125,7 @@
             <section data-route="event" tabindex="-1">
 				<paper-material lang="he">
 				<h1 class="page-title" tabindex="-1">חיפוש ארועים</h1>
-	              <controll-event event-id="{{params.id}}">
+	              <controll-event event-id="{{params.eventId}}">
               	</paper-material>
             </section>
 			
@@ -134,6 +134,13 @@
 					<h1 class="page-title" tabindex="-1">כרטיס שחקן</h1>
               		<controll-profile-search></controll-profile-search>
               	</paper-material>
+            </section>
+            
+            <section data-route="ticket-view" tabindex="-1">
+            	<paper-material lang="he">
+            		<h1 class="page-title" tabindex="-1"></h1>
+            		<controll-ticket-view user-id="{{params.userId}}"></controll-ticket-view>
+            	</paper-material>
             </section>
           </iron-pages>
         </div>

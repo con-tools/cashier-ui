@@ -54,7 +54,7 @@
     
     page('/event/:id', function(data) {
         app.route = 'event';
-        app.params = data.params;
+    	app.params = { eventId: data.params.id };
         setFocus(app.route);
       });
     
@@ -62,6 +62,12 @@
         app.route = 'profile-search';
         setFocus(app.route);
       });
+    
+    page('/tickets/:id', function(data){
+    	app.route = 'ticket-view';
+    	app.params = { userId: data.params.id };
+    	setFocus(app.route);
+    });
 
     // 404
     page('*', function() {
