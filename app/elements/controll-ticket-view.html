@@ -26,6 +26,9 @@
 	.startText {
 		width: 9.5em;
 	}
+	.used {
+		text-decoration: line-through;
+	}
 	</style>
 	
 	<paper-material class="user-details" elevation="3">
@@ -49,7 +52,10 @@
 			<strong>סוג:</strong>
 			<div>{{coupon.type.title}}</div>
 			<strong>שווי:</strong>
-			<div>{{coupon.value}}</div>
+			<div class$="{{coupon.cssUsageClass}}">{{coupon.value}}</div>
+			<template is="dom-if" if="{{coupon.used}}">
+				<strong>נפדה</strong>
+			</template>
 		</paper-item>
 	</template>
 	
@@ -108,11 +114,17 @@ Polymer({
 
 	attached : function() {
 		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
+		app.addEventListener('cart-updated', this.reloadUserData.bind(this), false);
+	},
+	
+	reloadUserData : function() {
+		if (this.get('userId'))
+			this.updateUserId(':' + this.get('userId'));
 	},
 	
 	updateUserId : function(id) {
 		if (id) {
-			var ids = id.match(/^:(\d+)/);
+			var ids = id.match(/^:+(\d+)/);
 			if (ids) {
 				this.set('userId', ids[1]);
 				return;
@@ -129,8 +141,10 @@ Polymer({
 	},
 	
 	populateUserData : function(user) {
-		this.set('coupons', user.coupons.filter(function(coupon){
-			return !coupon.used;
+		app.fire('user-profile-changed', {user: user});
+		this.set('coupons', user.coupons.map(function(coupon){
+			coupon.cssUsageClass = coupon.used ? 'used' : 'unused';
+			return coupon;
 		}));
 		var tickets = user.tickets.map(function(ticket){
 			ticket = app.dejsonify(ticket);
