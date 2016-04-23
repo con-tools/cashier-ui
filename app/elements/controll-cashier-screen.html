@@ -8,6 +8,9 @@
 	paper-input {
 		margin: 0 0.7em;
 	}
+	.actions {
+		margin-bottom: .5em
+	}
 	</style>
 	
 	<paper-material elevation="1" lang="he">
@@ -23,7 +26,7 @@
 			<paper-input readonly tabindex="-1" class="flex" label="דואל" value="[[user.email]]"></paper-input>
 			<paper-input readonly tabindex="-1" label="טלפון" value="[[user.phone]]"></paper-input>
 		</paper-item>
-		<div class="layout horizontal">
+		<div class="layout horizontal actions">
 			<paper-button raised tabindex="101" on-tap="printTickets">הדפסת כרטיסים</paper-button>
 			<paper-button raised tabindex="102" on-tap="cashOut">תשלום מזומן</paper-button>
 			<paper-button raised tabindex="103" on-tap="creditOut">תשלום באשראי</paper-button>
