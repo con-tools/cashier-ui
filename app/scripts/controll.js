@@ -276,7 +276,7 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
-	ConTrollTickets.prototype.forTimeslot = function(timeslotId, callback) {
+	ConTrollTimeslots.prototype.forTimeslot = function(timeslotId, callback) {
 		this.api.get(this.collection, '?all=1&is-valid=1&by_timeslot=' + timeslotId, function(res, err) {
 			if (err) {
 				console.log('Error', err.error || err);
