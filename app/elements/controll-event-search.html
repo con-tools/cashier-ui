@@ -27,6 +27,10 @@
 	}
 	.table-field {
 		padding-right: 1em;
+		white-space: nowrap;
+	}
+	.not-available {
+		opacity: 0.3;
 	}
 	paper-dialog {
 		padding: 1em;
@@ -60,10 +64,13 @@
 	
 	<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
 		<paper-item class="layout horizontal" tabindex="-1">
-			<paper-icon-button icon="add-shopping-cart" on-tap="addToCart"></paper-icon-button>
+			<paper-icon-button class$="{{timeslot.available_css_class}}" icon="add-shopping-cart" on-tap="addToCart"></paper-icon-button>
 			<paper-icon-button icon="launch" on-tap="showEvent"></paper-icon-button>
 			<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
-			<div class="table-field" on-tap="popupEventView"><iron-icon icon="event-seat"></iron-icon><span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span></div>
+			<div class="table-field" on-tap="popupEventView" title="[[timeslot.available_text]]">
+				<iron-icon icon="event-seat"></iron-icon>
+				<span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span>
+			</div>
 			<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
 			<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
 			<strong on-tap="popupEventView">התחלה:</strong>
@@ -129,6 +136,8 @@ Polymer({
 			timeslot.displayTime = moment(timeslot.start).format("MMM D, YYYY HH:mm");
 			timeslot.round = app.getRound(timeslot.start);
 			timeslot.event.price = parseInt(timeslot.event.price);
+			timeslot.available_text = 'נשארו ' + timeslot.available_tickets + ' מקומות מתוך ' + timeslot.max_attendees + ' מקומות אפשריים';
+			timeslot.available_css_class = timeslot.available_tickets > 0 ? 'available' : 'not-available';
 			timeslot.event.tagtypes = [];
 			for (tag in timeslot.event.tags) {
 				var data = timeslot.event.tags[tag]
@@ -179,6 +188,7 @@ Polymer({
 	},
 	
 	addToCart : function(ev) {
+		if (ev.model.timeslot.available_tickets <= 0) return;
 		this.timeslotTitle = ev.model.timeslot.event.title;
 		this.$.addedToCart.open();
 		app.addToCart(ev.model.timeslot, (function(){
