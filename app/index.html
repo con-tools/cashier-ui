@@ -87,8 +87,7 @@
        	</paper-button>
         </paper-menu>
         
-        
-        <controll-cart-summary cart-items="{{cart}}"></controll-cart-summary>
+        <controll-cart-summary cart-items="{{cart}}" total="{{cartTotal}}"></controll-cart-summary>
         
       </paper-scroll-header-panel>
 
@@ -115,7 +114,7 @@
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
           
             <section data-route="home" tabindex="-1">
-              <controll-cashier-screen id="cashier" user="{{user}}"></controll-cashier-screen>
+              <controll-cashier-screen id="cashier" user="{{user}}" cart-total="{{cartTotal}}"></controll-cashier-screen>
             </section>
 
             <section data-route="event-search" tabindex="-1">

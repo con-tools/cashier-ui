@@ -81,6 +81,7 @@ ConTroll.ifAuth(function(){
 	app.addEventListener('dom-change', function() {
 		console.log('Our app is ready to rock!');
 		this.set('cart',[]);
+		this.set('cartTotal', 0);
 	});
 
 	window.addEventListener('WebComponentsReady', function() {// See https://github.com/Polymer/polymer/issues/1381

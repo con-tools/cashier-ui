@@ -57,6 +57,7 @@
 			<iron-icon icon="clear"></iron-icon>
 			הסר הכל
 		</paper-button>
+		
 	</paper-material>
 </template>
 </dom-module>
@@ -74,7 +75,10 @@
 				notify: true,
 				value: function() { return []; }
 			},
-			total : Number
+			total : { 
+				type: Number,
+				notify: true
+			}
 		},
 		
 		observers: [
