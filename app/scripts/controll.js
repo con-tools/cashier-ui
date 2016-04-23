@@ -874,6 +874,10 @@ var ConTroll = (function(w,d){
 		api.conventionApiKey = api_key;
 	}
 	
+	ConTroll.getConvention = function() {
+		return api.conventionApiKey;
+	}
+	
 	/**
 	 * Perform a cashout for the current cart of the specified user
 	 * @param userid Number ID of user
