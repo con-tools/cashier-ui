@@ -101,7 +101,9 @@
 			if (ids) { // amount changes
 				var baseticket = cartItemsChanges.base[parseInt(ids[1])];
 				var displayId = this.cartDisplay.findIndex(function(t){ return t.id == baseticket.id; });
-				this.set('cartDisplay.' + displayId + '.amount',cartItemsChanges.value);
+				this.set('cartDisplay.' + displayId, baseticket);
+				this.notifyPath('cartDisplay.' + displayId + '.amount', baseticket.amount);
+				this.notifyPath('cartDisplay.' + displayId + '.price', baseticket.price);
 				this.set('cartDisplay.' + displayId + '.disallow_more', baseticket.timeslot.available_tickets <= 0);
 			} else { // other changes
 				this.set('cartDisplay', []);

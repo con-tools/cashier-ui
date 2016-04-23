@@ -200,8 +200,10 @@ ConTroll.ifAuth(function(){
 			this.cart[i].timeslot.available_tickets = ticket.timeslot.available_tickets; // populate property calculated on the server
 			if (amount < 1)
 				this.splice('cart',i,1);
-			else
+			else {
 				this.set('cart.' + i + '.amount', ticket.amount);
+				this.set('cart.' + i + '.price', ticket.price);
+			}
 			if (callback) callback(ticket);
 			app.fire('cart-updated');
 		}).bind(this));
