@@ -580,6 +580,13 @@ var ConTroll = (function(w,d){
 		});
 	};
 	
+	ConTrollUsers.prototype.get = function(id, callback) {
+		this.api.get(this.collection, id, function(res, err) {
+			if (err) return reportError('getting a user profile',err);
+			callback(res);
+		});
+	};
+	
 	ConTrollUsers.prototype.create = function(name, email, phone, callback) {
 		if (typeof phone == 'function') {// phone is optional
 			callback = phone;
