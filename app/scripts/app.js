@@ -171,7 +171,7 @@ ConTroll.ifAuth(function(){
 		var i = this.cart.findIndex(function(t){ return t.timeslot.id == timeslot.id; });
 		if (i < 0) {
 			ConTroll.tickets.addToCart(timeslot.id, user.id, (function(ticket){
-				this.updateCart(ticket);
+				this.updateCart({ detail: {ticket: ticket} });
 				if (callback) callback(ticket);
 			}).bind(this));
 		} else {
@@ -179,7 +179,10 @@ ConTroll.ifAuth(function(){
 		}
 	};
 	
-	app.updateCart = function(ticket) {
+	app.updateCart = function(event) {
+		if (event.detail.user) {
+			this.$.cashier.user = event.detail.user;
+		}
 		if (this.$.cashier.user)
 			ConTroll.tickets.forUser(this.$.cashier.user.id, (function(tickets){
 				this.set('cart', tickets);
@@ -197,6 +200,7 @@ ConTroll.ifAuth(function(){
 			else
 				this.set('cart.' + i + '.amount', ticket.amount);
 			if (callback) callback(ticket);
+			app.fire('cart-updated');
 		}).bind(this));
 	};
 	
