@@ -123,7 +123,11 @@
 		clearCart : function() {
 			if (this.cartDisplay.length <= 0)
 				return;
-			app.updateCartAmount(this.cartDisplay[0].id, 0, this.clearCart.bind(this));
+			var ticket = this.cartDisplay.filter(function(ticket){
+				return (ticket.status == 'reserved' || ticket.status == 'processing');
+			})[0];
+			if (ticket)
+				app.updateCartAmount(ticket.id, 0, this.clearCart.bind(this));
 		}
 	});
 </script>
