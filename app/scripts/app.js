@@ -82,6 +82,7 @@ ConTroll.ifAuth(function(){
 		console.log('Our app is ready to rock!');
 		this.set('cart',[]);
 		this.set('cartTotal', 0);
+		this.set('couponsTotal', 0);
 	});
 
 	window.addEventListener('WebComponentsReady', function() {// See https://github.com/Polymer/polymer/issues/1381
@@ -181,15 +182,26 @@ ConTroll.ifAuth(function(){
 		}
 	};
 	
+	app.updateCouponsValue = function() {
+		ConTroll.users.get(this.$.cashier.user.id, (function(user){
+			this.set('couponsTotal', user.coupons.reduce(function(sum, coupon){
+				if (coupon.used)
+					return sum;
+				return sum + parseFloat(coupon.value);
+			}, 0));
+		}).bind(this));
+	};
+	
 	app.updateCart = function(event) {
 		if (event.detail.user) {
 			this.$.cashier.user = event.detail.user;
 		}
-		if (this.$.cashier.user)
+		if (this.$.cashier.user) {
 			ConTroll.tickets.forUser(this.$.cashier.user.id, (function(tickets){
 				this.set('cart', tickets);
 			}).bind(this));
-		else
+			this.updateCouponsValue();
+		} else
 			this.set('cart',[]);
 		app.fire('cart-updated');
 	};
@@ -205,6 +217,7 @@ ConTroll.ifAuth(function(){
 				this.set('cart.' + i + '.price', ticket.price);
 			}
 			if (callback) callback(ticket);
+			this.updateCouponsValue();
 			app.fire('cart-updated');
 		}).bind(this));
 	};

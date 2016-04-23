@@ -25,6 +25,9 @@
 		width: 40px;
 		zoom: .6;
 	}
+	strong: {
+		marging: 0 1em;
+	}
 	</style>
 	<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 	<style is="custom-style" include="shared-styles"></style>
@@ -61,6 +64,11 @@
 			הסר הכל
 		</paper-button>
 		
+		<paper-item>
+			<strong>סך קופונים:</strong>
+			<div>₪[[totalCoupons]]</div>
+		</paper-item>
+		
 	</paper-material>
 </template>
 </dom-module>
@@ -81,7 +89,11 @@
 			total : { 
 				type: Number,
 				notify: true
-			}
+			},
+			totalCoupons : {
+				type: Number,
+				notify: true
+			},
 		},
 		
 		observers: [
