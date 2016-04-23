@@ -211,5 +211,13 @@ ConTroll.ifAuth(function(){
 		ConTroll.logout('/');
 	};
 	
+	app.ccCheckoutOK = function(){
+		this.$.cashier.ccCompleteOK();
+	};
+	
+	app.ccCheckoutFail = function(reason){
+		this.$.cashier.ccCompleteFail(reason);
+	};
+	
 	app.addEventListener('user-profile-changed', app.updateCart.bind(app), false);
 })(document);

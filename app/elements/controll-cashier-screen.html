@@ -192,12 +192,23 @@ Polymer({
 		form.elements['ok'].value = window.location.protocol + '//' + window.location.host + '/cc_complete_ok.html';
 		form.elements['fail'].value = window.location.protocol + '//' + window.location.host + '/cc_complete_fail.html';
 		form.elements['user'].value = this.get('user').id;
+		this.$.creditCheckout.toggle();
 		this.$.creditCheckoutPayment.toggle();
 		window.setTimeout(function(){
 			document.getElementById('cc_checkout').style.height = (window.innerHeight - 140) + 'px';
 			form.submit();
 		}, 500);
 	},
+	
+	ccCompleteOK : function() {
+		this.$.creditCheckoutPayment.toggle();
+		this.printTickets();
+	},
+	
+	ccCompleteFail : function(reason) {
+		this.$.creditCheckoutPayment.toggle();
+		alert("שגיאה בתשלום באשראי: " + reason);
+	}
 	
 });
 </script>
