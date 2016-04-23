@@ -1,0 +1,151 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+
+<dom-module id="controll-ticket-view">
+<template>
+	<style is="custom-style" include="shared-styles"></style>
+	<style>
+	strong {
+		margin: 0 1em;
+	}
+	.user-details strong {
+		vertical-align: bottom;
+		margin: 16px 1em 0;
+		width: 3em;
+	}
+	.table-field {
+		padding-right: 1em;
+		white-space: nowrap;
+	}
+	.price {
+		width: 3em;
+	}
+	.roundText {
+		width: 6.5em;
+	}
+	.startText {
+		width: 9.5em;
+	}
+	</style>
+	
+	<paper-material class="user-details" elevation="3">
+	<paper-item tabindex="-1">
+		<strong>שם: </strong>
+		<paper-input readonly tabindex="-1" value="[[user.name]]"></paper-input>
+	</paper-item>
+	<paper-item tabindex="-1">
+		<strong>דואל: </strong>
+		<paper-input readonly tabindex="-1" value="[[user.email]]"></paper-input>
+	</paper-item>
+	<paper-item tabindex="-1">
+		<strong>טלפון: </strong>
+		<paper-input readonly tabindex="-1" value="[[user.phone]]"></paper-input>
+	</paper-item>
+	</paper-material>
+	
+	<h3>קופונים</h3>
+	<template is="dom-repeat" items="{{coupons}}" as="coupon">
+		<paper-item class="layout horizontal" tabindex="-1">
+			<strong>סוג:</strong>
+			<div>{{coupon.type.title}}</div>
+			<strong>שווי:</strong>
+			<div>{{coupon.value}}</div>
+		</paper-item>
+	</template>
+	
+	<h3>כרטיסים</h3>
+	<template is="dom-repeat" items="{{tickets}}" as="ticket">
+		<paper-item class="layout horizontal" tabindex="-1">
+			<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
+			<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[ticket.timeslot.round]]</span></div>
+			<strong on-tap="popupEventView">התחלה:</strong>
+			<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
+		</paper-item>
+	</template>
+
+	<h3>עגלת קניות</h3>
+	<template is="dom-repeat" items="{{shoppingCart}}" as="ticket">
+		<paper-item class="layout horizontal" tabindex="-1">
+			<div class="flex" on-tap="popupEventView">[[ticket.timeslot.event.title]]</div>
+			<div class="price table-field" on-tap="popupEventView">&#8362;[[ticket.price]]</div>
+			<div class="roundText table-field" on-tap="popupEventView">
+				<iron-icon icon="history"></iron-icon>
+				<span>[[ticket.timeslot.round]]</span>
+			</div>
+			<strong on-tap="popupEventView">התחלה:</strong>
+			<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
+		</paper-item>
+	</template>
+	
+</template>
+</dom-module>
+
+<script>
+Polymer({
+	is : 'controll-ticket-view',
+	properties : {
+		userId : {
+			type: Number,
+			observer: 'updateUserId'
+		},
+		user : {
+			type: Object
+		},
+		coupons : {
+			type: Array
+		},
+		tickets : {
+			type: Array
+		},
+		shoppingCart : {
+			type: Array
+		}
+	},
+
+	ready : function() {
+		this.updateUserId();
+	},
+
+	attached : function() {
+		app.addEventListener('please-refresh-lists', this.ready.bind(this), false);
+	},
+	
+	updateUserId : function(id) {
+		if (id) {
+			var ids = id.match(/^:(\d+)/);
+			if (ids) {
+				this.set('userId', ids[1]);
+				return;
+			}
+		}
+		if (id) {
+			ConTroll.users.get(id, this.populateUserData.bind(this));
+		} else {
+			this.set('user', null);
+			this.set('coupons', []);
+			this.set('tickets',[]);
+			this.set('shoppingCart',[]);
+		}
+	},
+	
+	populateUserData : function(user) {
+		this.set('coupons', user.coupons);
+		var tickets = user.tickets.map(function(ticket){
+			ticket = app.dejsonify(ticket);
+			ticket.timeslot.displayTime = moment(ticket.timeslot.start).format("MMM D, YYYY HH:mm");
+			ticket.timeslot.round = app.getRound(ticket.timeslot.start);
+			ticket.price = parseInt(ticket.price);
+			return ticket;
+		});
+		delete user.tickets;
+		delete user.coupons;
+		this.set('tickets', tickets.filter(function(ticket){
+			return ticket.status == 'authorized'
+		}));
+		this.set('shoppingCart', tickets.filter(function(ticket){
+			return ticket.status == 'reserved' || ticket.status == 'processing';
+		}));
+		this.set('user', user);
+	}
+});
+</script>

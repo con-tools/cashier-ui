@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/paper-styles/typography.html">
 
 <dom-module id="controll-cashier-screen">
-<template>
+<template on-focus="ready">
 	<style is="custom-style" include="shared-styles"></style>
 	<style>
 	paper-input {
@@ -19,10 +19,15 @@
 	<iron-collapse id="currentUser">
 		<paper-item tabindex="-1" layout="horizontal flexible">
 			<paper-icon-button icon="backspace" on-tap="resetUser"></paper-icon-button>
-			<paper-input readonly class="flex" label="שם" value="[[user.name]]"></paper-input>
-			<paper-input readonly class="flex" label="דואל" value="[[user.email]]"></paper-input>
-			<paper-input readonly label="טלפון" value="[[user.phone]]"></paper-input>
+			<paper-input readonly tabindex="-1" class="flex" label="שם" value="[[user.name]]"></paper-input>
+			<paper-input readonly tabindex="-1" class="flex" label="דואל" value="[[user.email]]"></paper-input>
+			<paper-input readonly tabindex="-1" label="טלפון" value="[[user.phone]]"></paper-input>
 		</paper-item>
+		<div class="layout horizontal">
+			<paper-button raised tabindex="101" on-tap="printTickets">הדפסת כרטיסים</paper-button>
+			<paper-button raised tabindex="102" on-tap="cashOut">תשלום מזומן</paper-button>
+			<paper-button raised tabindex="103" on-tap="creditOut">תשלום באשראי</paper-button>
+		</div>
 	</iron-collapse>
 	<iron-collapse id="users">
 		<controll-profile-search user="{{user}}"></controll-profile-search>
@@ -76,7 +81,15 @@ Polymer({
 		this.$.currentUser.hide();
 		this.$.users.show();
 		this.$.events.hide();
-	}
+	},
+	
+	printTickets : function() {
+		page.show('/tickets/:' + this.user.id);
+	},
+	
+	cashOut : function() {},
+	
+	creditOut : function() {},
 	
 });
 </script>
