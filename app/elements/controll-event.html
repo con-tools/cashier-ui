@@ -34,6 +34,38 @@
 		</template>
 	</paper-material>
 	
+	<h3>כרטיסים</h3>
+	<template is="dom-repeat" items="{{timeslots}}" as="timeslot">
+		<paper-material>
+			<paper-item>
+				<div title="[[timeslot.available_text]]">
+					<iron-icon icon="event-seat"></iron-icon>
+					<span class="seats">[[timeslot.available_tickets]]</span>/<span class="seats">[[timeslot.max_attendees]]</span>
+				</div>
+				<div>
+					<iron-icon icon="expand-more"></iron-icon>
+					[[timeslot.min_attendees]]
+				</div>
+				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
+				<strong on-tap="popupEventView">התחלה:</strong>
+				<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
+				<paper-item-body><strong>מנחה:</strong>
+					<template is="dom-repeat" items="{{timeslot.hosts}}" as="host">
+					[[host.name]]
+					</template>
+				</paper-item-body>
+			</paper-item>
+			<template is="dom-repeat" items="{{timeslot.tickets}}" as="ticket">
+				<paper-item tabindex="-1" class="layout horizontal">
+					<paper-item-body class="flex"><iron-icon icon="face"></iron-icon>[[ticket.user.name]]</paper-item-body>
+					<paper-item-body class="flex"><iron-icon icon="mail"></iron-icon>[[ticket.user.email]]</paper-item-body>
+					<paper-item-body class="flex"><iron-icon icon="event-seat"></iron-icon>[[ticket.amount]]</paper-item-body>
+					<paper-item-body class="flex">[[ticket.status]]</paper-item-body>
+				</paper-item>
+			</template>
+		</paper-material>
+	</template>
+	
 </template>
 </dom-module>
 
@@ -45,7 +77,8 @@ Polymer({
 			type: Number,
 			observer: '_updateEventId'
 		},
-		event : Object
+		event : Object,
+		timeslots : Array
 	},
 	
 	ready : function() {
@@ -62,6 +95,26 @@ Polymer({
 			return;
 		console.log("Loading event data for event " + evid);
 		ConTroll.events.get(evid, this.updateEventData.bind(this));
+		ConTroll.tickets.forEvent(evid, this.updateTickets.bind(this));
+	},
+	
+	updateTickets : function(tickets) {
+		var timeslots = {};
+		tickets.forEach(function(ticket){
+			var timeslot = app.dejsonify(ticket.timeslot);
+			delete ticket.timeslot;
+			timeslot.displayTime = moment(timeslot.start).format("MMM D, YYYY HH:mm");
+			timeslot.round = app.getRound(timeslot.start);
+			if (!timeslots[timeslot.id]) {
+				timeslot.tickets = [];
+				timeslots[timeslot.id] = timeslot;
+			}
+			timeslots[timeslot.id].tickets.push(ticket);
+		});
+		var timeslot_list = [];
+		for (var tid in timeslots)
+			timeslot_list.push(timeslots[tid]);
+		this.set('timeslots',timeslot_list);
 	},
 	
 	updateEventData : function(event) {
