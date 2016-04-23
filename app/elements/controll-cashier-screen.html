@@ -41,6 +41,27 @@
 	</iron-collapse>
 	</paper-material>
 	
+	<paper-dialog id="cashCheckout" lang="he">
+		<h2>תשלום במזומן</h2>
+		<div>
+			<strong>סה"כ:</strong>
+			<span>₪[[cartTotal]]</span>
+		</div>
+		<p>
+			האם התקבל תשלום מלא במזומן מהלקוח?
+		</p>
+		<div class="layout horizontal">
+			<paper-button class="flex" raised on-tap="cacheOutComplete">
+				<iron-icon icon="check-circle"></iron-icon>
+				אישור
+			</paper-button>
+			<paper-button class="flex" raised on-tap="cacheOut">
+				<iron-icon icon="cancel"></iron-icon>
+				ביטול
+			</paper-button>
+		</div>
+	</paper-dialog>
+	
 </template>
 </dom-module>
 
@@ -51,6 +72,10 @@ Polymer({
 		user : {
 			type: Object,
 			observer: 'updateUser',
+			notify: true
+		},
+		cartTotal : {
+			type: Number,
 			notify: true
 		}
 	},
@@ -87,7 +112,21 @@ Polymer({
 		page.show('/tickets/:' + this.user.id);
 	},
 	
-	cashOut : function() {},
+	cashOut : function() {
+		if (!this.get('user') || !this.get('user').id) // sanity
+			return;
+		this.$.cashCheckout.toggle();
+	},
+	
+	cacheOutComplete : function() {
+		ConTroll.cashout(this.get('user').id, this.get('cartTotal'), (function(res){
+			this.$.cashCheckout.toggle();
+			if (!res.status) {
+				alert("שגיאה באישור תשלום! צור קשר עם מנהל הקופות");
+			}
+			app.sendRefreshEvent();
+		}).bind(this));
+	},
 	
 	creditOut : function() {},
 	
