@@ -43,6 +43,9 @@
 		padding: 0;
 		min-height: 36px;
 	}
+	.allow-buy-false {
+		display: none;
+	}
 	</style>
 	
 	<iron-pages id="loader" attr-for-selected="id" selected="now-loading" lang="he">
@@ -84,7 +87,9 @@
 		
 		<template is="dom-repeat" items="[[filteredTimeslots]]" as="timeslot">
 			<paper-item class="layout horizontal" tabindex="-1">
+				<div class$="allow-buy-{{allowBuy}}">
 				<paper-icon-button class$="{{timeslot.available_css_class}}" icon="add-shopping-cart" on-tap="addToCart"></paper-icon-button>
+				</div>
 				<paper-icon-button icon="launch" on-tap="showEvent"></paper-icon-button>
 				<div class="flex" on-tap="popupEventView">[[timeslot.event.title]]</div>
 				<div class="table-field" on-tap="popupEventView" title="[[timeslot.available_text]]">
@@ -148,7 +153,11 @@ Polymer({
 		},
 		timeslotTitle : String,
 		viewedEvent : Object,
-		genres : Array
+		genres : Array,
+		allowBuy : {
+			type: String,
+			value: function() { return 'false'; }
+		}
 	},
 	
 	ready : function(event) {
