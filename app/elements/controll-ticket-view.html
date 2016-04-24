@@ -99,6 +99,12 @@
 				[[ticket.amount]]
 			</div>
 			<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[ticket.timeslot.round]]</span></div>
+			<div class="table-field" on-tap="popupEventView">
+				<iron-icon icon="explore"></iron-icon>
+				<template is="dom-repeat" items="{{ticket.timeslot.locations}}" as="location">
+					[[location.title]]
+				</template>
+			</div>
 			<strong on-tap="popupEventView">התחלה:</strong>
 			<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
 		</paper-item>
@@ -117,6 +123,12 @@
 				<div class="roundText table-field" on-tap="popupEventView">
 					<iron-icon icon="history"></iron-icon>
 					<span>[[ticket.timeslot.round]]</span>
+				</div>
+				<div class="table-field" on-tap="popupEventView">
+					<iron-icon icon="explore"></iron-icon>
+					<template is="dom-repeat" items="{{ticket.timeslot.locations}}" as="location">
+						[[location.title]]
+					</template>
 				</div>
 				<strong on-tap="popupEventView">התחלה:</strong>
 				<div class="startText" on-tap="popupEventView">[[ticket.timeslot.displayTime]]</div>
