@@ -7,6 +7,10 @@
 	strong {
 		padding: 0 2em;
 	}
+	.location {
+	width: 7em;
+	margin: 0 .7em;
+	}
 	</style>
 	<style is="custom-style" include="shared-styles"></style>
 	
@@ -49,6 +53,12 @@
 				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
 				<strong on-tap="popupEventView">התחלה:</strong>
 				<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
+				<div class="location table-field" on-tap="popupEventView">
+					<iron-icon icon="explore"></iron-icon>
+					<template is="dom-repeat" items="{{timeslot.locations}}" as="location">
+						[[location.title]]
+					</template>
+				</div>
 				<paper-item-body><strong>מנחה:</strong>
 					<template is="dom-repeat" items="{{timeslot.hosts}}" as="host">
 					[[host.name]]
