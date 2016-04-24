@@ -244,7 +244,7 @@ Polymer({
 				// this round, or the round that will start in the next hour
 				(!currentRound || ts.round == (app.getRound(now) || app.getRound(new Date(now.getTime() + 3600000)))) &&
 				// starts less than half an hour ago
-				(!hidePast || (now.getTime() - moment(ts.start).valueOf()) < -1800000);
+				(!hidePast || (now.getTime() - moment(ts.start).valueOf()) < 1800000);
 		});
 	},
 	
