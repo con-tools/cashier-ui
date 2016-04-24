@@ -28,6 +28,10 @@
 	.price {
 		width: 3em;
 	}
+	.location {
+		width: 9em;
+		overflow: hidden;
+	}
 	.table-field {
 		padding-right: 1em;
 		white-space: nowrap;
@@ -102,6 +106,12 @@
 				</div>
 				<div class="price table-field" on-tap="popupEventView">&#8362;[[timeslot.event.price]]</div>
 				<div class="roundText table-field" on-tap="popupEventView"><iron-icon icon="history"></iron-icon><span>[[timeslot.round]]</span></div>
+				<div class="location table-field" on-tap="popupEventView">
+					<iron-icon icon="explore"></iron-icon>
+					<template is="dom-repeat" items="{{timeslot.locations}}" as="location">
+						[[location.title]]
+					</template>
+				</div>
 				<strong on-tap="popupEventView">התחלה:</strong>
 				<div class="startText" on-tap="popupEventView">[[timeslot.displayTime]]</div>
 			</paper-item>
