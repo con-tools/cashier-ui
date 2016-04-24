@@ -64,12 +64,21 @@
 			הסר הכל
 		</paper-button>
 		
-		<paper-item>
+	</paper-material>
+		
+	<paper-material lang="he">
+		<h3>קופונים</h3>
+		<template is="dom-repeat" items="{{coupons}}" as="coupon">
+			<paper-item tabindex="-1">
+				[[coupon.type.title]] ₪[[coupon.value]]
+			</paper-item>
+		</template>
+		<paper-item tabindex="-1">
 			<strong>סך קופונים:</strong>
 			<div>₪[[totalCoupons]]</div>
 		</paper-item>
-		
 	</paper-material>
+	
 </template>
 </dom-module>
 
@@ -90,10 +99,15 @@
 				type: Number,
 				notify: true
 			},
+			coupons : {
+				type: Array,
+				notify: true,
+				observer: 'updateCouponList'
+			},
 			totalCoupons : {
 				type: Number,
 				notify: true
-			},
+			}
 		},
 		
 		observers: [
@@ -105,6 +119,14 @@
 		},
 
 		attached : function() {
+		},
+		
+		updateCouponList : function(coupons) {
+			this.set('totalCoupons', coupons.reduce(function(sum, coupon){
+				if (coupon.used)
+					return sum;
+				return sum + parseFloat(coupon.value);
+			}, 0));
 		},
 		
 		updateCart : function(cartItemsChanges) {

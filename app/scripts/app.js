@@ -82,7 +82,7 @@ ConTroll.ifAuth(function(){
 		console.log('Our app is ready to rock!');
 		this.set('cart',[]);
 		this.set('cartTotal', 0);
-		this.set('couponsTotal', 0);
+		this.set('coupons', []);
 	});
 
 	window.addEventListener('WebComponentsReady', function() {// See https://github.com/Polymer/polymer/issues/1381
@@ -184,11 +184,7 @@ ConTroll.ifAuth(function(){
 	
 	app.updateCouponsValue = function() {
 		ConTroll.users.get(this.$.cashier.user.id, (function(user){
-			this.set('couponsTotal', user.coupons.reduce(function(sum, coupon){
-				if (coupon.used)
-					return sum;
-				return sum + parseFloat(coupon.value);
-			}, 0));
+			this.set('coupons', user.coupons);
 		}).bind(this));
 	};
 	
