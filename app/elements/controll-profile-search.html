@@ -107,7 +107,7 @@ Polymer({
 	},
 	
 	doSearch : function(event) {
-		if (event && event.code.match(/Enter$/) && this.displayUsers.length > 0) {
+		if (event && event.code && event.code.match(/Enter$/) && this.displayUsers.length > 0) {
 			this.set('user', this.displayUsers[0])
 			return false;
 		}
