@@ -83,6 +83,7 @@ ConTroll.ifAuth(function(){
 		this.set('cart',[]);
 		this.set('cartTotal', 0);
 		this.set('coupons', []);
+		this.set('cashiername', ConTroll.userDetails().name);
 	});
 
 	window.addEventListener('WebComponentsReady', function() {// See https://github.com/Polymer/polymer/issues/1381
