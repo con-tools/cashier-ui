@@ -198,8 +198,10 @@ ConTroll.ifAuth(function(){
 				this.set('cart', tickets);
 			}).bind(this));
 			this.updateCouponsValue();
-		} else
+		} else {
 			this.set('cart',[]);
+			this.set('coupons', []);
+		}
 		app.fire('cart-updated');
 	};
 	
